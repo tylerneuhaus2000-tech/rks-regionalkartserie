@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() { return request.auth != null && request.auth.token.admin == true; }
+    function isPublished() { return resource.data.published == true; }
+    match /{collection}/{document=**} {
+      allow read: if isAdmin() || isPublished();
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}
