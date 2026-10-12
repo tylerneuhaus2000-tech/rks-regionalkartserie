@@ -8,7 +8,7 @@ const SeasonContext=createContext<{season:SeasonYear;setSeason:(year:SeasonYear)
 
 export function SeasonProvider({children}:{children:React.ReactNode}){
   const[season,setSeason]=useState<SeasonYear>(2026);
-  useEffect(()=>{const stored=Number(window.localStorage.getItem("rks-season"));if(seasons.includes(stored as SeasonYear))setSeason(stored as SeasonYear);},[]);
+  useEffect(()=>{const timer=window.setTimeout(()=>{const stored=Number(window.localStorage.getItem("rks-season"));if(seasons.includes(stored as SeasonYear))setSeason(stored as SeasonYear);},0);return()=>window.clearTimeout(timer);},[]);
   const value=useMemo(()=>({season,setSeason:(year:SeasonYear)=>{setSeason(year);window.localStorage.setItem("rks-season",String(year));}}),[season]);
   return <SeasonContext.Provider value={value}>{children}</SeasonContext.Provider>;
 }

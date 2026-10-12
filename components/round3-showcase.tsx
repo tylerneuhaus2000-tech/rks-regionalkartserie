@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { m, animate, useInView, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
-import { ArrowRight, ArrowUpRight, CalendarDays, Camera, Check, ChevronRight, CloudSun, Download, Flag, Gauge, Image, LockKeyhole, Map, MapPin, Play, Route, Timer, Trophy, Users } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarDays, Camera, Check, ChevronRight, CloudSun, Download, Flag, Gauge, Image as ImageIcon, LockKeyhole, Map, MapPin, Play, Route, Timer, Trophy } from "lucide-react";
 import { round3Event } from "@/lib/rks-data";
 import { useLiveRound3 } from "@/lib/use-live-round3";
 import { useLiveDrivers } from "@/lib/use-live-drivers";
 
 function Countdown({ date }: { date: string | null }) {
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(0);
   useEffect(() => {
     if (!date) return;
+    const initialTick = window.setTimeout(() => setNow(Date.now()), 0);
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
+    return () => { window.clearTimeout(initialTick); window.clearInterval(timer); };
   }, [date]);
   if (!date) return null;
   const timestamp = new Date(date).getTime();
@@ -45,12 +46,16 @@ function RoundDate({ date }: { date: string }) {
   return new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date(date));
 }
 
+function RoundTime({ date }: { date: string }) {
+  return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }).format(new Date(date));
+}
+
 export function Round3Showcase() {
   const event = useLiveRound3();
   const standings = useLiveDrivers(2026);
   const leader = standings[0];
   const challenger = standings[1];
-  const date = event.date ?? round3Event.date ?? "2026-10-21T00:00:00+02:00";
+  const date = event.date ?? round3Event.date ?? "2026-10-21T17:00:00+02:00";
   return <section className="round3-section" aria-labelledby="round3-title">
     <div className="wrap">
       <m.div className="round3-card" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .55, ease: "easeOut" }}>
@@ -67,7 +72,7 @@ export function Round3Showcase() {
         <div className="round3-lower">
           <div className="round3-map-wrap"><div className="round3-map-label"><Map size={13}/> BAHN 2 LAYOUT <span>OFFICIAL TRACK MAP</span></div><div className="round3-layout-placeholder"><Route size={25}/><b>Daytona · Bahn 2</b><span>Official circuit layout will be published here.</span></div></div>
           <div className="round3-side">
-            <div className="round3-champ"><div className="eyebrow">CURRENT CHAMPIONSHIP · 2026</div><div className="round3-leader"><span className="leader-number">01</span><div><b>{leader?.name ?? "—"}</b><small>DRIVERS CHAMPIONSHIP LEADER</small></div><strong>{leader?.points ?? "—"} <small>PTS</small></strong></div><div className="round3-gap"><span>{challenger?.name ?? "—"}</span><div><i style={{ width: leader && challenger && leader.points > 0 ? `${Math.min(100, challenger.points / leader.points * 100)}%` : "0%" }}/></div><b>{leader && challenger ? `−${leader.points - challenger.points} PTS` : "—"}</b></div><Link href="/championship" className="link-arrow">Standings ansehen <ArrowRight size={13}/></Link></div>
+          <div className="round3-champ"><div className="eyebrow">CURRENT CHAMPIONSHIP · 2026</div><div className="round3-leader"><span className="leader-number">P1</span><div><b>{leader?.name ?? "—"}</b><small>DRIVERS CHAMPIONSHIP LEADER</small></div><strong>{leader?.points ?? "—"} <small>PTS</small></strong></div><div className="round3-gap"><span>{challenger?.name ?? "—"}</span><div><i style={{ width: leader && challenger && leader.points > 0 ? `${Math.min(100, challenger.points / leader.points * 100)}%` : "0%" }}/></div><b>{leader && challenger ? `−${leader.points - challenger.points} PTS` : "—"}</b></div><Link href="/championship" className="link-arrow">Standings ansehen <ArrowRight size={13}/></Link></div>
             <div className="round3-track-specs"><div><strong>21 <small>OCT</small></strong><span>RACE DATE</span></div><div><strong>02</strong><span>BAHN</span></div><div><strong>03</strong><span>ROUND</span></div><p>Daytona Kart Center · Essen</p></div>
           </div>
         </div>
@@ -76,7 +81,7 @@ export function Round3Showcase() {
           { label: "Qualifying", href: "/calendar/round-3#qualifying", icon: Gauge, state: "Session details to follow" },
           { label: "Race", href: "/calendar/round-3#race", icon: Flag, state: "21 October · Bahn 2" },
           { label: "RaceHub", href: "/calendar/round-3#racehub", icon: Play, state: "Opens after the race" },
-          { label: "Media", href: "/calendar/round-3#media", icon: Image, state: "Gallery to follow" },
+          { label: "Media", href: "/calendar/round-3#media", icon: ImageIcon, state: "Gallery to follow" },
           { label: "Downloads", href: "/calendar/round-3#downloads", icon: Download, state: "Documents to follow" },
         ].map(({ label, href, icon: Icon, state }) => <Link href={href} key={label}><Icon/><span><b>{label}</b><small>{state}</small></span><ArrowUpRight className="round3-arrow"/></Link>)}</nav>
       </m.div>
@@ -94,21 +99,20 @@ export function Round3EventPage() {
   const event = useLiveRound3();
   const standings = useLiveDrivers(2026);
   const podium = standings.slice(0, 3);
-  const date = event.date ?? round3Event.date ?? "2026-10-21T00:00:00+02:00";
+  const date = event.date ?? round3Event.date ?? "2026-10-21T17:00:00+02:00";
   const dateLabel = date ? <RoundDate date={date}/> : "Date will be announced.";
-  const trackName = "Daytona Kart Center Essen";
   return <main className="round3-page">
     <section className="round3-premium-hero" aria-labelledby="round3-event-name">
-      <img className="round3-hero-photo" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=2000&q=85" alt="Kart racing action at a circuit · illustrative image" width="1600" height="1067" fetchPriority="high"/>
+      <div className="round3-hero-visual" aria-hidden="true"><span className="round3-visual-orbit orbit-one"/><span className="round3-visual-orbit orbit-two"/><span className="round3-visual-cut"/><span className="round3-visual-label">ESSEN<br/>2026</span></div>
       <div className="round3-hero-shade"/>
       <div className="wrap round3-hero-content">
         <div className="round3-hero-eyebrow"><span className="round3-red-mark"/> RKS 2026 <i/> ROUND 03 <i/> ESSEN</div>
-        <div className="round3-hero-status"><span className="round3-status-dot"/> EVENT STATUS <b>UPCOMING</b><span className="round3-status-divider"/> DRIVERS & TEAMS CHAMPIONSHIP</div>
+        <div className="round3-hero-status"><span className="round3-status-dot"/> EVENT STATUS <b>UPCOMING</b><span className="round3-status-divider"/> DRIVERS CHAMPIONSHIP</div>
         <h1 id="round3-event-name">Daytona Kart Center<br/><span>Essen · Bahn 2</span></h1>
-        <p className="round3-hero-copy">Round 3 arrives at Daytona Kart Center Essen on 21 October. The 2026 title fight moves to Bahn 2.</p>
+        <p className="round3-hero-copy">Round 3 arrives at Daytona Kart Center Essen on <RoundDate date={date}/> at <RoundTime date={date}/>. The 2026 title fight moves to Bahn 2 for a HOT 25.</p>
         <div className="round3-hero-actions"><a className="round3-action-primary" href="#circuit">Discover the circuit <ArrowRight size={15}/></a><a className="round3-action-secondary" href="#racehub">Explore RaceHub <ArrowUpRight size={15}/></a></div>
         <div className="round3-hero-base">
-          <span className="round3-photo-credit">Illustrative image · Official event photography to follow</span>
+          <span className="round3-photo-credit">HOT 25 · EVENT START 17:00 · OFFICIAL MEDIA TO FOLLOW</span>
           <div className="round3-hero-countdown"><span>LIGHTS OUT IN</span><Countdown date={date}/></div>
         </div>
       </div>
@@ -116,7 +120,7 @@ export function Round3EventPage() {
     </section>
 
     <section className="round3-event-overview wrap" aria-label="Event overview">
-      <article className="round3-overview-card round3-date-card"><span className="round3-card-icon"><CalendarDays/></span><div><small>RACE WEEKEND</small><strong>{dateLabel}</strong><p>21 October 2026 · Wednesday</p></div><span className="round3-card-rule"/></article>
+          <article className="round3-overview-card round3-date-card"><span className="round3-card-icon"><CalendarDays/></span><div><small>RACE WEEKEND</small><strong>{dateLabel}</strong><p><RoundDate date={date}/> · Event start <RoundTime date={date}/></p></div><span className="round3-card-rule"/></article>
       <article className="round3-overview-card"><span className="round3-card-icon"><Flag/></span><div><small>EVENT STATUS</small><strong>Round 03 · Upcoming</strong><p>Next stop in the 2026 season.</p></div><span className="round3-card-rule"/></article>
       <article className="round3-overview-card"><span className="round3-card-icon"><MapPin/></span><div><small>VENUE & CIRCUIT</small><strong>Daytona Kart Center Essen</strong><p>Bahn 2</p></div><span className="round3-card-rule"/></article>
       <article className="round3-overview-card"><span className="round3-card-icon"><CloudSun/></span><div><small>RACE-DAY CONDITIONS</small><strong>Weather information to follow</strong><p>Conditions will be added closer to race day.</p></div><span className="round3-card-rule"/></article>
@@ -131,7 +135,7 @@ export function Round3EventPage() {
         </article>
         <article className="round3-standings-card">
           <div className="round3-mini-heading"><div><span className="round3-kicker">DRIVERS CHAMPIONSHIP</span><h3>Championship leaders</h3></div><span className="round3-season-pill">2026</span></div>
-          <div className="round3-podium-list">{podium.map((driver, index) => <Link href={`/drivers/${driver.slug}`} className={`round3-podium-row podium-${index + 1}`} key={driver.slug}><span className="round3-podium-position">{String(driver.position).padStart(2, "0")}</span><span className="round3-podium-medal"/><span className="round3-podium-driver"><b>{driver.name}</b><small>{index === 0 ? "CHAMPIONSHIP LEADER" : "DRIVER"}</small></span><span className="round3-podium-points">{driver.points}<small>PTS</small></span><ChevronRight size={15}/></Link>)}</div>
+          <div className="round3-podium-list">{podium.map((driver, index) => <Link href={`/drivers/${driver.slug}`} className={`round3-podium-row podium-${index + 1}`} key={driver.slug}><span className="round3-podium-position">P{driver.position}</span><span className="round3-podium-medal"/><span className="round3-podium-driver"><b>{driver.name}</b><small>{index === 0 ? "CHAMPIONSHIP LEADER" : "DRIVER"}</small></span><span className="round3-podium-points">{driver.points}<small>PTS</small></span><ChevronRight size={15}/></Link>)}</div>
           <Link href="/championship" className="round3-standings-footer">View the full championship <ArrowRight size={14}/></Link>
         </article>
       </div>
@@ -145,7 +149,7 @@ export function Round3EventPage() {
         <article className="round3-spec-card"><span className="round3-spec-icon"><Route/></span><strong>BAHN 2</strong><span>CIRCUIT</span><div className="round3-spec-underline"/></article>
         <article className="round3-spec-card"><span className="round3-spec-icon"><Flag/></span><strong>03</strong><span>CHAMPIONSHIP ROUND</span><div className="round3-spec-underline"/></article>
       </div>
-      <div className="round3-spec-note"><span><Check size={13}/> Official event venue confirmed</span><span><Check size={13}/> Bahn 2 confirmed</span><span className="round3-source-line">Circuit specifications will be published when confirmed.</span></div>
+      <div className="round3-spec-note"><span><Check size={13}/> Official event venue confirmed</span><span><Check size={13}/> Bahn 2 confirmed</span><span><Check size={13}/> HOT 25 · start 17:00</span><span className="round3-source-line">Circuit specifications will be published when confirmed.</span></div>
     </div></section>
 
     <section className="round3-section-block wrap" id="schedule">
@@ -161,8 +165,8 @@ export function Round3EventPage() {
     <section className="round3-section-block wrap round3-assets-section" id="media">
       <div className="round3-section-heading"><div><span className="round3-kicker">FOLLOW EVERY MOMENT</span><h2>Event coverage.</h2></div><span className="round3-assets-note">Official event material will appear here.</span></div>
       <div className="round3-assets-grid">
-        <article className="round3-gallery-card"><div className="round3-gallery-art"><div className="round3-gallery-frame frame-one"><Camera/></div><div className="round3-gallery-frame frame-two"><Image/></div><div className="round3-gallery-frame frame-three"><Play/></div><span className="round3-gallery-number">03</span><span className="round3-gallery-glow"/></div><div className="round3-gallery-copy"><span className="round3-kicker">PHOTOS · VIDEO · ONBOARD</span><h3>Round 3 at Daytona.</h3><p>Event photography and onboard footage will be added after race day.</p><Link href="/media" className="round3-asset-link">Explore RKS Media <ArrowRight size={14}/></Link></div></article>
-        <article className="round3-download-card" id="downloads"><div className="round3-download-head"><div><span className="round3-kicker">OFFICIAL DOCUMENTS</span><h3>Downloads.</h3></div><Download size={20}/></div><p>Session documents and official results will be added when released.</p><div className="round3-download-list"><div><span className="round3-download-file"><Gauge/></span><span><b>Qualifying classification</b><small>Official session result</small></span><span className="round3-locked"><LockKeyhole size={12}/> Awaiting event</span></div><div><span className="round3-download-file"><Trophy/></span><span><b>Race classification</b><small>Final results & points</small></span><span className="round3-locked"><LockKeyhole size={12}/> Awaiting event</span></div><div><span className="round3-download-file"><Image/></span><span><b>Event media pack</b><small>Photos & highlights</small></span><span className="round3-locked"><LockKeyhole size={12}/> Awaiting event</span></div></div><a href="#racehub" className="round3-download-footer">Official results will feature in RaceHub <ArrowRight size={14}/></a></article>
+        <article className="round3-gallery-card"><div className="round3-gallery-art"><div className="round3-gallery-frame frame-one"><Camera/></div><div className="round3-gallery-frame frame-two"><ImageIcon/></div><div className="round3-gallery-frame frame-three"><Play/></div><span className="round3-gallery-number">03</span><span className="round3-gallery-glow"/></div><div className="round3-gallery-copy"><span className="round3-kicker">PHOTOS · VIDEO · ONBOARD</span><h3>Round 3 at Daytona.</h3><p>Event photography and onboard footage will be added after race day.</p><Link href="/media" className="round3-asset-link">Explore RKS Media <ArrowRight size={14}/></Link></div></article>
+        <article className="round3-download-card" id="downloads"><div className="round3-download-head"><div><span className="round3-kicker">OFFICIAL DOCUMENTS</span><h3>Downloads.</h3></div><Download size={20}/></div><p>Session documents and official results will be added when released.</p><div className="round3-download-list"><div><span className="round3-download-file"><Gauge/></span><span><b>Qualifying classification</b><small>Official session result</small></span><span className="round3-locked"><LockKeyhole size={12}/> Awaiting event</span></div><div><span className="round3-download-file"><Trophy/></span><span><b>Race classification</b><small>Final results & points</small></span><span className="round3-locked"><LockKeyhole size={12}/> Awaiting event</span></div><div><span className="round3-download-file"><ImageIcon/></span><span><b>Event media pack</b><small>Photos & highlights</small></span><span className="round3-locked"><LockKeyhole size={12}/> Awaiting event</span></div></div><a href="#racehub" className="round3-download-footer">Official results will feature in RaceHub <ArrowRight size={14}/></a></article>
       </div>
     </section>
     <section className="round3-section-block wrap" id="racehub"><div className="round3-section-heading"><div><span className="round3-kicker">AFTER THE FLAG</span><h2>Round 3 RaceHub.</h2></div><span className="round3-announcement"><Timer size={14}/> Opens after the event</span></div><div className="round3-racehub-placeholder"><div><Play/><span><b>RaceHub activates after Round 3</b><small>Replay, gap evolution, results and driver ratings will appear here after the race.</small></span></div><Link href="/racehub">Explore the latest RaceHub <ArrowRight size={14}/></Link></div></section>

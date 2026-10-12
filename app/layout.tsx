@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "RKS – Regionalkartserie", template: "%s | RKS" },
-  description: "The official home of the RKS Regionalkartserie. Follow the 2026 inaugural Drivers and Teams Championships, the race calendar, event results and RaceHub.",
+  description: "The official home of the RKS Regionalkartserie. Follow the 2026 inaugural Drivers Championship, confirmed race results, the calendar and RaceHub.",
   applicationName: "RKS Regionalkartserie",
   manifest: "/manifest.webmanifest",
   openGraph: { title: "RKS – Regionalkartserie", description: "A new season. Every position matters.", type: "website", locale: "de_DE" },

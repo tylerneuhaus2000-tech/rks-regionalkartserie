@@ -1,14 +1,28 @@
+import { season2026 } from "@/data/2026/season";
+import { getStandings2026 } from "@/data/2026/selectors";
+
 export type Driver = {
+  id?: string;
   name: string;
   slug: string;
   points: number;
   position: number;
+  rating?: number;
+  tier?: string;
   qualifying?: number;
+  wins?: number;
+  podiums?: number;
+  poles?: number;
+  fastestLaps?: number;
+  starts?: number;
+  averageFinish?: number | null;
+  bestFinish?: number | null;
   tags?: string[];
 };
 
 export const currentSeason = 2026;
 export const seasonOptions = [2026, 2027, 2028] as const;
+
 /** Archived venue data retained for a possible future event. Not used by the 2026 calendar. */
 export const dortmundEvent = {
   name: "Highway Kart Racing Dortmund",
@@ -32,9 +46,12 @@ export type RksCalendarEvent = {
   round: number;
   date: string | null;
   scheduleWindow?: string;
+  time?: string;
   venue: string | null;
   course: string | null;
   trackId: string | null;
+  format?: string | null;
+  layoutId?: string | null;
   status: "complete" | "upcoming";
   resultsLabel?: string;
   resultsEventId?: string;
@@ -42,23 +59,35 @@ export type RksCalendarEvent = {
 
 export const daytonaTrackId = "daytona-kart-center-essen";
 
-export const seasonCalendar2026: RksCalendarEvent[] = [
-  { id: "rks-2026-round-1-daytona", season: 2026, round: 1, date: "2026-04-08T00:00:00+02:00", venue: "Daytona Kart Center Essen", course: null, trackId: daytonaTrackId, status: "complete", resultsLabel: "HOT 25", resultsEventId: "rks-2026-round-1-daytona" },
-  { id: "rks-2026-round-2-daytona-bahn-1", season: 2026, round: 2, date: "2026-08-27T00:00:00+02:00", venue: "Daytona Kart Center Essen", course: "Bahn 1", trackId: daytonaTrackId, status: "complete", resultsLabel: "HOT 30", resultsEventId: "rks-2026-round-2-daytona-bahn-1" },
-  { id: "rks-2026-round-3-daytona-bahn-2", season: 2026, round: 3, date: "2026-10-21T00:00:00+02:00", venue: "Daytona Kart Center Essen", course: "Bahn 2", trackId: daytonaTrackId, status: "upcoming" },
-  { id: "rks-2026-round-4", season: 2026, round: 4, date: null, scheduleWindow: "Winterferien NRW 2026", venue: null, course: null, trackId: null, status: "upcoming" },
-];
+export const seasonCalendar2026: RksCalendarEvent[] = season2026.events.map((event) => ({
+  id: event.id,
+  season: 2026,
+  round: event.round,
+  date: event.date,
+  scheduleWindow: event.dateWindow ?? undefined,
+  time: event.round === 3 ? "17:00" : undefined,
+  venue: event.venue,
+  course: event.layoutId ? season2026.layouts[event.layoutId === "DAYTONA-ESSEN-B1-INDOOR" ? "daytonaEssenB1Indoor" : "daytonaEssenB2"].name : null,
+  trackId: event.venue ? daytonaTrackId : null,
+  format: event.format,
+  layoutId: event.layoutId,
+  status: event.status === "complete" ? "complete" : "upcoming",
+  resultsLabel: event.status === "complete" ? event.format ?? undefined : undefined,
+  resultsEventId: event.status === "complete" ? event.id : undefined,
+}));
 
-export const round3Event = seasonCalendar2026[2];
+export const round3Event = seasonCalendar2026[2]!;
 
-/** Firestore event seed documents. Result records for completed rounds use the matching document id as eventId. */
-export const firestoreEventSeeds = seasonCalendar2026.map(event => ({
+/** Firestore event seed documents. Result records use the event's stable ID as eventId. */
+export const firestoreEventSeeds = seasonCalendar2026.map((event) => ({
   id: event.id,
   seasonId: String(event.season),
   round: event.round,
   trackId: event.trackId,
   trackName: event.venue,
   course: event.course,
+  layoutId: event.layoutId,
+  format: event.format,
   startAt: event.date,
   scheduleWindow: event.scheduleWindow ?? null,
   resultsLabel: event.resultsLabel ?? null,
@@ -67,33 +96,43 @@ export const firestoreEventSeeds = seasonCalendar2026.map(event => ({
   published: true,
 }));
 
-export const drivers: Driver[] = [
-  { name: "Tyler", slug: "tyler", points: 45, position: 1, qualifying: 2, tags: ["Championship leader", "Fastest lap"] },
-  { name: "Jonah", slug: "jonah", points: 43, position: 2, qualifying: 3, tags: ["Last race winner"] },
-  { name: "Lennard F.", slug: "lennard-f", points: 27, position: 3, qualifying: 1 },
-  { name: "Louis", slug: "louis", points: 20, position: 4, qualifying: 4 },
-  { name: "Lennaed W.", slug: "lennaed-w", points: 15, position: 5 },
-  { name: "Elijah", slug: "elijah", points: 14, position: 6, qualifying: 6 },
-  { name: "Jean-Luca", slug: "jean-luca", points: 12, position: 7, qualifying: 5 },
-  { name: "Markus", slug: "markus", points: 8, position: 8 },
-  { name: "Fabian", slug: "fabian", points: 6, position: 9, qualifying: 8 },
-  { name: "Kilian", slug: "kilian", points: 4, position: 10, qualifying: 7 },
-  { name: "Jona Oestermann", slug: "jona-oestermann", points: 4, position: 10, qualifying: 9 },
-  { name: "Peter", slug: "peter", points: 4, position: 10 },
-  { name: "Marco", slug: "marco", points: 1, position: 13 },
-  { name: "Henry", slug: "henry", points: 0, position: 14 },
-  { name: "Jona T.", slug: "jona-t", points: 0, position: 14 },
-];
+const standings = getStandings2026();
+const lastEvent = season2026.events[1]!;
+export const drivers: Driver[] = standings.map((row) => ({
+  id: row.id,
+  name: row.name,
+  slug: row.slug,
+  points: row.points,
+  position: row.position,
+  rating: row.rating,
+  tier: row.tier,
+  qualifying: row.latestQualifying ?? undefined,
+  wins: row.wins,
+  podiums: row.podiums,
+  poles: row.poles,
+  fastestLaps: row.fastestLaps,
+  starts: row.starts,
+  averageFinish: row.averageFinish,
+  bestFinish: row.bestFinish,
+  tags: [
+    ...(row.position === 1 ? ["Championship leader"] : []),
+    ...(row.wins ? ["Race winner"] : []),
+    ...(row.fastestLaps ? ["Fastest lap"] : []),
+  ],
+}));
 
-export const latestQualifying = ["Lennard F.", "Tyler", "Jonah", "Louis", "Jean-Luca", "Elijah", "Kilian", "Fabian", "Jona Oestermann"];
-
+const driverName = (id: string) => season2026.drivers.find((driver) => driver.id === id)?.name ?? "";
+export const latestQualifying = lastEvent.qualifying.map(driverName);
 export const latestRace = {
-  winner: "Jonah",
-  fastestLap: "Tyler",
-  round: "Round 2 · HOT 30",
-  date: "27 August 2026",
-  venue: "Daytona Kart Center Essen · Bahn 1",
-  eventId: "rks-2026-round-2-daytona-bahn-1",
+  winner: driverName(lastEvent.raceWinnerId!),
+  fastestLap: driverName(lastEvent.fastestLap!.driverId),
+  fastestLapTimeMs: lastEvent.fastestLap!.timeMs,
+  pole: driverName(lastEvent.qualifying[0]!),
+  winningMarginMs: lastEvent.results[1]!.officialTotalTimeMs - lastEvent.results[0]!.officialTotalTimeMs,
+  round: `Round ${lastEvent.round} · ${lastEvent.format}`,
+  date: new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date(lastEvent.date!)),
+  venue: `${lastEvent.venue} · ${season2026.layouts[lastEvent.layoutId === "DAYTONA-ESSEN-B1-INDOOR" ? "daytonaEssenB1Indoor" : "daytonaEssenB2"].name}`,
+  eventId: lastEvent.id,
   status: "Complete",
 };
 
