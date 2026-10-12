@@ -52,6 +52,7 @@ export type RksCalendarEvent = {
   trackId: string | null;
   format?: string | null;
   layoutId?: string | null;
+  courseName?: string | null;
   status: "complete" | "upcoming";
   resultsLabel?: string;
   resultsEventId?: string;
@@ -67,7 +68,7 @@ export const seasonCalendar2026: RksCalendarEvent[] = season2026.events.map((eve
   scheduleWindow: event.dateWindow ?? undefined,
   time: event.round === 3 ? "17:00" : undefined,
   venue: event.venue,
-  course: event.layoutId ? season2026.layouts[event.layoutId === "DAYTONA-ESSEN-B1-INDOOR" ? "daytonaEssenB1Indoor" : "daytonaEssenB2"].name : null,
+  course: event.courseName ?? (event.layoutId ? season2026.layouts[event.layoutId === "DAYTONA-ESSEN-B1-INDOOR" ? "daytonaEssenB1Indoor" : "daytonaEssenB2"].name : null),
   trackId: event.venue ? daytonaTrackId : null,
   format: event.format,
   layoutId: event.layoutId,
@@ -137,8 +138,8 @@ export const latestRace = {
 };
 
 export const primaryNav = [
-  ["Home", "/"], ["Championship", "/championship"], ["Drivers", "/drivers"], ["Teams", "/teams"],
-  ["Calendar", "/calendar"], ["Race Center", "/race-center"], ["RaceHub", "/racehub"], ["Statistics", "/statistics"], ["Media", "/media"], ["Regulations", "/regulations"],
+  ["Home", "/"], ["Championship", "/championship"], ["Races", "/races"], ["Drivers", "/drivers"],
+  ["Statistics", "/statistics"], ["Regulations", "/regulations"],
 ] as const;
 
 export const allSections = [
