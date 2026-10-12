@@ -9,12 +9,9 @@ export type Driver = {
 
 export const currentSeason = 2026;
 export const seasonOptions = [2026, 2027, 2028] as const;
-export const raceEvent = {
-  season: 2026,
-  round: 3,
+/** Archived venue data retained for a possible future event. Not used by the 2026 calendar. */
+export const dortmundEvent = {
   name: "Highway Kart Racing Dortmund",
-  date: null as string | null,
-  previousWinner: null as string | null,
   track: {
     length: "1.600 km",
     lengthMeters: 1600,
@@ -27,8 +24,48 @@ export const raceEvent = {
     sourceUrl: "https://hwkr.pro/",
     indoor: true,
   },
-  status: "scheduled" as const,
 };
+
+export type RksCalendarEvent = {
+  id: string;
+  season: 2026;
+  round: number;
+  date: string | null;
+  scheduleWindow?: string;
+  venue: string | null;
+  course: string | null;
+  trackId: string | null;
+  status: "complete" | "upcoming";
+  resultsLabel?: string;
+  resultsEventId?: string;
+};
+
+export const daytonaTrackId = "daytona-kart-center-essen";
+
+export const seasonCalendar2026: RksCalendarEvent[] = [
+  { id: "rks-2026-round-1-daytona", season: 2026, round: 1, date: "2026-04-08T00:00:00+02:00", venue: "Daytona Kart Center Essen", course: null, trackId: daytonaTrackId, status: "complete", resultsLabel: "HOT 25", resultsEventId: "rks-2026-round-1-daytona" },
+  { id: "rks-2026-round-2-daytona-bahn-1", season: 2026, round: 2, date: "2026-08-27T00:00:00+02:00", venue: "Daytona Kart Center Essen", course: "Bahn 1", trackId: daytonaTrackId, status: "complete", resultsLabel: "HOT 30", resultsEventId: "rks-2026-round-2-daytona-bahn-1" },
+  { id: "rks-2026-round-3-daytona-bahn-2", season: 2026, round: 3, date: "2026-10-21T00:00:00+02:00", venue: "Daytona Kart Center Essen", course: "Bahn 2", trackId: daytonaTrackId, status: "upcoming" },
+  { id: "rks-2026-round-4", season: 2026, round: 4, date: null, scheduleWindow: "Winterferien NRW 2026", venue: null, course: null, trackId: null, status: "upcoming" },
+];
+
+export const round3Event = seasonCalendar2026[2];
+
+/** Firestore event seed documents. Result records for completed rounds use the matching document id as eventId. */
+export const firestoreEventSeeds = seasonCalendar2026.map(event => ({
+  id: event.id,
+  seasonId: String(event.season),
+  round: event.round,
+  trackId: event.trackId,
+  trackName: event.venue,
+  course: event.course,
+  startAt: event.date,
+  scheduleWindow: event.scheduleWindow ?? null,
+  resultsLabel: event.resultsLabel ?? null,
+  resultsEventId: event.resultsEventId ?? null,
+  status: event.status === "complete" ? "complete" as const : "scheduled" as const,
+  published: true,
+}));
 
 export const drivers: Driver[] = [
   { name: "Tyler", slug: "tyler", points: 45, position: 1, qualifying: 2, tags: ["Championship leader", "Fastest lap"] },
@@ -53,8 +90,10 @@ export const latestQualifying = ["Lennard F.", "Tyler", "Jonah", "Louis", "Jean-
 export const latestRace = {
   winner: "Jonah",
   fastestLap: "Tyler",
-  round: "Latest round",
-  date: "Track and date not yet published",
+  round: "Round 2 · HOT 30",
+  date: "27 August 2026",
+  venue: "Daytona Kart Center Essen · Bahn 1",
+  eventId: "rks-2026-round-2-daytona-bahn-1",
   status: "Complete",
 };
 
