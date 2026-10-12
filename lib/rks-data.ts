@@ -17,8 +17,12 @@ export const raceEvent = {
   previousWinner: null as string | null,
   track: {
     length: "1.600 km",
+    lengthMeters: 1600,
     corners: 20,
     width: "4–6 m",
+    halls: 2,
+    kartsPerRace: 22,
+    longestStraight: "70 m",
     layoutUrl: "https://hwkr.pro/highway-track-map.png",
     sourceUrl: "https://hwkr.pro/",
     indoor: true,
