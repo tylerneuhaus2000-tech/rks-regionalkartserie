@@ -7,6 +7,25 @@ export type Driver = {
   tags?: string[];
 };
 
+export const currentSeason = 2026;
+export const seasonOptions = [2026, 2027, 2028] as const;
+export const raceEvent = {
+  season: 2026,
+  round: 3,
+  name: "Highway Kart Racing Dortmund",
+  date: null as string | null,
+  previousWinner: null as string | null,
+  track: {
+    length: "1.600 km",
+    corners: 20,
+    width: "4–6 m",
+    layoutUrl: "https://hwkr.pro/highway-track-map.png",
+    sourceUrl: "https://hwkr.pro/",
+    indoor: true,
+  },
+  status: "scheduled" as const,
+};
+
 export const drivers: Driver[] = [
   { name: "Tyler", slug: "tyler", points: 45, position: 1, qualifying: 2, tags: ["Championship leader", "Fastest lap"] },
   { name: "Jonah", slug: "jonah", points: 43, position: 2, qualifying: 3, tags: ["Last race winner"] },
@@ -37,11 +56,11 @@ export const latestRace = {
 
 export const primaryNav = [
   ["Home", "/"], ["Championship", "/championship"], ["Drivers", "/drivers"], ["Teams", "/teams"],
-  ["Calendar", "/calendar"], ["RaceHub", "/racehub"], ["Statistics", "/statistics"], ["Media", "/media"], ["Regulations", "/regulations"],
+  ["Calendar", "/calendar"], ["Race Center", "/race-center"], ["RaceHub", "/racehub"], ["Statistics", "/statistics"], ["Media", "/media"], ["Regulations", "/regulations"],
 ] as const;
 
 export const allSections = [
-  ["Head to head", "/head-to-head"], ["Achievements", "/achievements"], ["Race center", "/race-center"], ["Administration", "/admin"],
+  ["Head to head", "/head-to-head"], ["Achievements", "/achievements"], ["Administration", "/admin"],
 ] as const;
 
 export function getDriver(slug: string) {
