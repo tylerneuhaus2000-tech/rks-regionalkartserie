@@ -5,8 +5,11 @@ export const metadata: Metadata = {
   title: { default: "RKS – Regionalkartserie", template: "%s | RKS" },
   description: "The official home of the RKS Regionalkartserie. Follow the 2026 inaugural Drivers Championship, confirmed race results, the calendar and RaceHub.",
   applicationName: "RKS Regionalkartserie",
+  authors: [{ name: "Tyler Neuhaus" }],
+  creator: "Tyler Neuhaus",
+  publisher: "Tyler Neuhaus",
   manifest: "/manifest.webmanifest",
-  openGraph: { title: "RKS – Regionalkartserie", description: "A new season. Every position matters.", type: "website", locale: "de_DE" },
+  openGraph: { title: "RKS – Regionalkartserie", description: "A new season. Every position matters.", type: "website", locale: "de_DE", siteName: "RKS – Regionalkartserie" },
   robots: { index: true, follow: true },
 };
 
