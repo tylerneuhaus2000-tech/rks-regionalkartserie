@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { season2026 } from "@/data/2026/season";
 import { auditLapTimes2026, driverById, formatLapTime, formatRaceTime, pointsForResult } from "@/data/2026/selectors";
 

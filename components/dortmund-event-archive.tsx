@@ -2,7 +2,7 @@
 
 /** Archived venue-specific design reference. It is not imported by 2026 event routes. */
 
-import Link from "next/link";
+import Link from "@/components/site-link";
 import NextImage from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ArrowUpRight, CalendarDays, Camera, Check, ChevronRight, Cloud, CloudSun, Download, Flag, Gauge, Image as ImageIcon, LockKeyhole, Map, MapPin, Play, Route, Timer, Trophy, Users } from "lucide-react";

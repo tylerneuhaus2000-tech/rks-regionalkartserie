@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { addDoc, collection, onSnapshot, serverTimestamp, updateDoc, doc, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from "firebase/auth";
 import { AlertTriangle, ArrowRight, Database, LogOut, Save, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { firebaseConfigured, getFirebaseAuth, getFirebaseDb } from "@/lib/firebase-client";
 import { firestoreEventSeeds } from "@/lib/rks-data";
 

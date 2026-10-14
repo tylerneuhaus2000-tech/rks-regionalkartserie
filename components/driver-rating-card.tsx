@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { season2026 } from "@/data/2026/season";
 import type { RksDriverRatingSnapshot } from "@/data/2026/driver-ratings";
 
