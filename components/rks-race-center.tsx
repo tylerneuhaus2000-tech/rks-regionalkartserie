@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { ArrowRight, Flag } from "lucide-react";
 import { ChampionshipProgression } from "@/components/championship-progression";
 import { PageHero, SectionHead, StatCard } from "@/components/rks-ui";

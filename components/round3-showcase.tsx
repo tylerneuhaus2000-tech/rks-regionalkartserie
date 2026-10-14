@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { ArrowRight, ArrowUpRight, Map } from "lucide-react";
 import { round3Event } from "@/lib/rks-data";
 import { useLiveRound3 } from "@/lib/use-live-round3";

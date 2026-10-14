@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { useState } from "react";
 import { ArrowRight, Medal, Search } from "lucide-react";
 import { season2026 } from "@/data/2026/season";
