@@ -47,7 +47,15 @@ export function OnboardPlayer() {
     }
   }
   useEffect(()=>{
-    function readLink(){const at=parseOnboardLink(window.location.search,video);if(at!==null){seek(at,undefined,null);root.current?.scrollIntoView({block:"start",behavior:"instant"});}}
+    function readLink(){
+      const at=parseOnboardLink(window.location.search,video);
+      if(at!==null)seek(at,undefined,null);
+      // The section is mounted after the browser's initial fragment jump because
+      // the player is lazy loaded. Scroll once it actually exists in the DOM.
+      if(window.location.hash==="#onboard" || new URLSearchParams(window.location.search).get("onboard")==="tyler"){
+        window.requestAnimationFrame(()=>root.current?.scrollIntoView({block:"start",behavior:"instant"}));
+      }
+    }
     const timer=window.setTimeout(()=>{setEnhanced(true);readLink();},0);window.addEventListener("popstate",readLink);return()=>{window.clearTimeout(timer);window.removeEventListener("popstate",readLink);};
     // Initial URL state is read once; media metadata applies the pending seek.
     // eslint-disable-next-line react-hooks/exhaustive-deps
