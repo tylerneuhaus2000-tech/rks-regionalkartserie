@@ -893,3 +893,46 @@ a.driver-rating-card:hover{transform:translateY(-2px);border-color:#65676a;backg
 .unrated-driver-list{margin:30px 0;padding:20px 24px;border-top:1px solid #393a3c;border-bottom:1px solid #393a3c}.unrated-driver-list h3{margin:0 0 12px;color:#aeb0b2;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.unrated-driver-list a{display:inline-flex;align-items:center;gap:10px;padding:9px 0;color:#fff;font-size:14px;font-weight:700}.unrated-driver-list a:hover{color:#ff5a5a}
 @media(max-width:760px){.replay-grid{grid-template-columns:minmax(0,1fr);gap:15px}.replay-copy{padding:19px}.replay-meta{gap:10px;flex-wrap:wrap}.replay-meta strong{flex-basis:100%;margin-left:0;margin-top:3px}.replay-play{width:56px;height:56px}}
 @media(prefers-reduced-motion:reduce){.replay-card,.replay-play{transition:none}}
+
+/* Round 3 MultiCam: one timeline, two persistent media elements. */
+.multicam{max-width:100%;}
+.multicam-modebar,.multicam-lap-source{display:flex;align-items:center;gap:4px;min-width:0;margin:0 0 12px}
+.multicam-modebar button,.multicam-lap-source button{border:0;border-radius:4px;background:#202020;color:#bdbdbd;padding:10px 16px;font-size:12px;font-weight:700;white-space:nowrap}
+.multicam-modebar button[aria-pressed=true],.multicam-lap-source button[aria-pressed=true]{background:#d40000;color:#fff}
+.multicam-stage{width:100%;aspect-ratio:16/9}
+.multicam-stage.is-split{aspect-ratio:32/9}
+.multicam-panes{position:absolute;inset:0;display:grid;grid-template-columns:1fr;min-width:0;background:#000}
+.multicam-stage.is-split .multicam-panes{grid-template-columns:repeat(2,minmax(0,1fr))}
+.multicam-pane{position:relative;display:none;min-width:0;min-height:0;overflow:hidden;cursor:pointer;background:#050505}
+.multicam-pane.is-visible{display:block}
+.multicam-pane video{display:block;width:100%;height:100%;object-fit:contain}
+.multicam-camera-name{position:absolute;top:14px;left:14px;padding:5px 8px;background:#000b;color:#fff;font-size:11px;font-weight:800;letter-spacing:.05em;pointer-events:none}
+.multicam-status{position:absolute;top:14px;right:14px;display:grid;justify-items:end;gap:4px;max-width:52%;padding:7px 10px;background:#000b;color:#fff;text-align:right;pointer-events:none}
+.multicam-status small{color:#bbb;font-size:9px;letter-spacing:.1em}
+.multicam-status strong{font-size:clamp(11px,1.25vw,16px);line-height:1.1}
+.multicam-status span{font-size:9px;color:#ddd;line-height:1.2}
+.multicam-stage.is-split .multicam-status{max-width:62%}
+.multicam-stage.is-split .multicam-status small{display:none}
+.multicam-audio select{max-width:112px;border:0;background:transparent;color:#fff;font-size:11px;padding:5px;cursor:pointer}
+.multicam-details{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:17px 0 12px}
+.multicam-details p{margin:5px 0 0;color:#aaa;font-size:12px}
+.multicam-details a{color:#fff;text-decoration:underline;text-decoration-color:#777;text-underline-offset:3px}
+.multicam-lap-source{margin:0}
+.multicam-lap-source button{padding:8px 11px}
+.multicam-stage:fullscreen{aspect-ratio:auto}
+.multicam-stage:fullscreen .multicam-panes{position:absolute;inset:0 0 0}
+.multicam-stage:fullscreen .multicam-pane video{object-fit:contain}
+@media(max-width:760px){
+  .multicam-modebar button{flex:1;padding:9px 3px;font-size:10px}
+  .multicam-stage.is-split{aspect-ratio:16/18}
+  .multicam-stage.is-split .multicam-panes{grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(0,1fr))}
+  .multicam-stage.is-split .multicam-camera-name{top:7px;left:7px;font-size:9px}
+  .multicam-stage.is-split .multicam-status{top:7px;right:7px;max-width:52%;padding:5px 6px}
+  .multicam-stage.is-split .multicam-status strong{font-size:10px}
+  .multicam-stage.is-split .multicam-status span{font-size:8px}
+  .multicam-audio select{max-width:65px;font-size:9px}
+  .multicam-details{align-items:start;flex-direction:column}
+  .multicam-details p{font-size:11px}
+  .multicam-stage:fullscreen.is-split{aspect-ratio:auto}
+  .multicam-stage:fullscreen.is-split .multicam-panes{grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(0,1fr))}
+}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { tylerRound1Onboard as video, tylerRound3Onboard as r3, R3_ESTIMATED_LAP1_START_SECONDS, onboardMoment, parseOnboardLink, onboardVideosForEvent2026 } from '../data/2026/onboards.ts';
+import { tylerRound1Onboard as video, tylerRound3Onboard as r3, jonahRound3Onboard as jonah, R3_ESTIMATED_LAP1_START_SECONDS, R3_JONAH_LAP1_START_SECONDS, onboardMoment, parseOnboardLink, parseMultiCamLink, playbackDriftCorrection, onboardVideosForEvent2026 } from '../data/2026/onboards.ts';
 import { raceLapRecords2026 } from '../data/2026/lap-times.ts';
 import { season2026 } from '../data/2026/season.ts';
 test('R1 onboard preserves verified identities and all 19 recorded laps',()=>{
@@ -34,7 +34,31 @@ test('session boundaries cover the owner-supplied source without overlaps',()=>{
  assert.equal(video.source.playbackUrl,'https://pub-780b62e2b1144605b0b3486d8ff9432e.r2.dev/2026/round-01/onboard/tyler-1080p.mp4');assert.equal(video.source.status,'available');
  assert.deepEqual(onboardVideosForEvent2026('2026-R01').map(item=>item.id),[video.id]);
  assert.deepEqual(onboardVideosForEvent2026('2026-R02'),[]);
- assert.deepEqual(onboardVideosForEvent2026('2026-R03').map(item=>item.id),[r3.id]);
+ assert.deepEqual(onboardVideosForEvent2026('2026-R03').map(item=>item.id),[r3.id,jonah.id]);
+});
+test('R3 both cameras retain exact shared video time but have independent official lap overlays',()=>{
+ assert.equal(R3_JONAH_LAP1_START_SECONDS,637);
+ assert.equal(r3.laps.length,24);assert.equal(jonah.laps.length,24);
+ assert.equal(r3.laps[9].videoStartSeconds,1073.832);assert.equal(r3.laps[17].videoStartSeconds,1466.5);assert.equal(r3.laps[23].videoStartSeconds,1760.982);assert.equal(r3.laps.at(-1).videoEndSeconds,1809.633);
+ assert.equal(jonah.laps[9].videoStartSeconds,1081.736);assert.equal(jonah.laps[17].videoStartSeconds,1475.599);assert.equal(jonah.laps[23].videoStartSeconds,1778.477);assert.equal(jonah.laps.at(-1).videoEndSeconds,1826.926);
+ for(const source of [r3,jonah])for(const lap of source.laps){const canonical=raceLapRecords2026.find(item=>item.eventId==='2026-R03'&&item.driverId===source.driverId&&item.lapNumber===lap.lapNumber);assert.equal(lap.recordedLapTimeMs,canonical?.lapTimeMs);}
+ assert.equal(onboardMoment(r3,635.999).session?.id,'formation');assert.equal(onboardMoment(r3,636).lap?.lapNumber,1);assert.equal(onboardMoment(r3,1073.832).lap?.lapNumber,10);assert.equal(onboardMoment(r3,1466.5).lap?.lapNumber,18);assert.equal(onboardMoment(r3,1760.982).lap?.lapNumber,24);assert.equal(onboardMoment(r3,1809.633).session?.id,'finish');
+ assert.equal(onboardMoment(jonah,636).session?.id,'formation');assert.equal(onboardMoment(jonah,637).lap?.lapNumber,1);assert.equal(onboardMoment(jonah,1081.736).lap?.lapNumber,10);assert.equal(onboardMoment(jonah,1475.599).lap?.lapNumber,18);assert.equal(onboardMoment(jonah,1778.477).lap?.lapNumber,24);assert.equal(onboardMoment(jonah,1826.926).session?.id,'finish');
+ assert.equal(onboardMoment(r3,1470).lap?.lapNumber,18);assert.equal(onboardMoment(jonah,1470).lap?.lapNumber,17);
+ assert.equal(jonah.laps[23].recordedLapTimeMs,48449);assert.equal(r3.laps[17].recordedLapTimeMs,47703);
+});
+test('MultiCam deep links never apply camera-dependent timeline offsets',()=>{
+ const pair=[r3,jonah];
+ for(const mode of ['tyler','jonah','split'])for(const timestamp of [636,637,925,1200,1500,1740])assert.deepEqual(parseMultiCamLink(`?onboard=${mode}&t=${timestamp}`,pair),{mode,time:timestamp});
+ assert.deepEqual(parseMultiCamLink('?onboard=jonah&lap=18',pair),{mode:'jonah',time:1475.599});
+ assert.deepEqual(parseMultiCamLink('?onboard=tyler&lap=18',pair),{mode:'tyler',time:1466.5});
+ assert.deepEqual(parseMultiCamLink('?onboard=split&t=1200',pair),{mode:'split',time:1200});
+ assert.deepEqual(parseMultiCamLink('',pair),{mode:'tyler',time:null});
+});
+test('split drift correction avoids constant seeks and restores requested speed',()=>{
+ assert.deepEqual(playbackDriftCorrection(20,20.1,1),{seekTo:null,playbackRate:1});
+ assert.deepEqual(playbackDriftCorrection(20,19.5,1.5),{seekTo:null,playbackRate:1.56});
+ assert.deepEqual(playbackDriftCorrection(20,21.5,1),{seekTo:20,playbackRate:1});
 });
 test('R3 onboard derives 24 exact lap boundaries from canonical race laps and an explicit estimated offset',()=>{
  assert.equal(R3_ESTIMATED_LAP1_START_SECONDS,636);
