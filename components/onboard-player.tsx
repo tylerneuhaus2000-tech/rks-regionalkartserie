@@ -29,17 +29,23 @@ export function OnboardPlayer() {
   const driver = driverById(video.driverId);
   const result = season2026.events.find(event => event.id === video.eventId)?.results.find(row => row.driverId === video.driverId);
   const fastest = Math.min(...video.laps.map(l => l.recordedLapTimeMs));
-  function seek(seconds: number, lap?: number, updateUrl = true) {
+  function seek(seconds: number, lap?: number, updateUrl: boolean | null = false) {
     const next = Math.max(0,Math.min(seconds,duration));
     setTime(next);pending.current = next;
     if (media.current && media.current.readyState >= 1) { media.current.currentTime=next;pending.current=null; }
     if(updateUrl) {
       const url=new URL(window.location.href);url.searchParams.set("onboard","tyler");url.searchParams.delete("lap");url.searchParams.delete("t");url.searchParams.set(lap ? "lap" : "t",String(lap || Math.floor(next)));url.hash="onboard";
       window.history.replaceState(window.history.state,"",url);
+    } else if (updateUrl === false) {
+      const url=new URL(window.location.href);
+      if(url.searchParams.has("lap") || url.searchParams.has("t")) {
+        url.searchParams.delete("lap");url.searchParams.delete("t");
+        window.history.replaceState(window.history.state,"",url);
+      }
     }
   }
   useEffect(()=>{
-    function readLink(){const at=parseOnboardLink(window.location.search,video);if(at!==null){seek(at,undefined,false);root.current?.scrollIntoView({block:"start",behavior:"instant"});}}
+    function readLink(){const at=parseOnboardLink(window.location.search,video);if(at!==null){seek(at,undefined,null);root.current?.scrollIntoView({block:"start",behavior:"instant"});}}
     const timer=window.setTimeout(()=>{setEnhanced(true);readLink();},0);window.addEventListener("popstate",readLink);return()=>{window.clearTimeout(timer);window.removeEventListener("popstate",readLink);};
     // Initial URL state is read once; media metadata applies the pending seek.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,6 +82,6 @@ export function OnboardPlayer() {
       <div className="onboard-now" aria-live="off"><b>{active.lap?`LAP ${active.lap.lapNumber}`:active.session?.title}</b><span>{active.lap?`${formatLapTime(active.lap.recordedLapTimeMs)} · recorded timing`:"Full race weekend footage"}</span></div>
       <nav className="onboard-sessions" aria-label="Onboard sessions">{video.sessions.filter(s=>s.quick).map(s=><button key={s.id} aria-current={active.session?.id===s.id?"true":undefined} onClick={()=>seek(s.start)}><b>{s.title}</b><small>{onboardClock(s.start)}</small></button>)}</nav>
       <p className="onboard-note">Video timestamps and recorded lap times use separate clocks. Shortcuts when the player is focused: Space play/pause · ←/→ seek · T theater · F fullscreen.</p>
-    </div><aside className="onboard-lap-panel" aria-label="Race lap navigation"><div className="onboard-lap-heading"><b>Race laps</b><span>{video.laps.length} LAPS · HOT 25</span></div><div className="onboard-laps" ref={lapPanel}>{video.laps.map(lap=><button key={lap.lapNumber} aria-current={active.lap?.lapNumber===lap.lapNumber?"true":undefined} onClick={()=>seek(lap.videoStartSeconds,lap.lapNumber)}><span><b>LAP {lap.lapNumber}</b><small>{onboardClock(lap.videoStartSeconds)}</small></span><span><strong>{formatLapTime(lap.recordedLapTimeMs)}</strong>{lap.recordedLapTimeMs===fastest?<small className="onboard-fastest">FASTEST</small>:lap.lapNumber===10?<small>+{((lap.recordedLapTimeMs-fastest)/1000).toFixed(2)} s to fastest</small>:null}</span></button>)}</div></aside></div>
+    </div><aside className="onboard-lap-panel" aria-label="Race lap navigation"><div className="onboard-lap-heading"><b>Race laps</b><span>{video.laps.length} LAPS · HOT 25</span></div><div className="onboard-laps" ref={lapPanel}>{video.laps.map(lap=><button key={lap.lapNumber} aria-current={active.lap?.lapNumber===lap.lapNumber?"true":undefined} onClick={()=>seek(lap.videoStartSeconds,lap.lapNumber,true)}><span><b>LAP {lap.lapNumber}</b><small>{onboardClock(lap.videoStartSeconds)}</small></span><span><strong>{formatLapTime(lap.recordedLapTimeMs)}</strong>{lap.recordedLapTimeMs===fastest?<small className="onboard-fastest">FASTEST</small>:lap.lapNumber===10?<small>+{((lap.recordedLapTimeMs-fastest)/1000).toFixed(2)} s to fastest</small>:null}</span></button>)}</div></aside></div>
   </section>;
 }
