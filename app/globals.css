@@ -848,6 +848,46 @@ a.driver-rating-card:hover{transform:translateY(-2px);border-color:#65676a;backg
 }
 @media(prefers-reduced-motion:reduce){.onboard-stage:fullscreen .onboard-controls{transition:none}}
 
+/* Video-first onboard controls. Keep the footage visible at every size. */
+.onboard-screen-column,.onboard-lap-panel{width:100%}
+.onboard-stage{border:0;border-radius:8px;aspect-ratio:16/9;background:#000}
+.onboard-screen{position:absolute;inset:0;aspect-ratio:auto;width:100%;height:100%}
+.onboard-screen video{display:block}
+.onboard-controls,.onboard-stage:fullscreen .onboard-controls{position:absolute;z-index:3;left:0;right:0;bottom:0;border:0;border-radius:0;background:linear-gradient(transparent,rgba(0,0,0,.3) 25%,rgba(0,0,0,.82));padding:32px 18px 10px;transition:opacity .18s ease,transform .18s ease}
+.onboard-stage.controls-hidden{cursor:none}
+.onboard-stage.controls-hidden .onboard-screen{cursor:none}
+.onboard-stage.controls-hidden .onboard-controls:not(:focus-within){opacity:0;transform:translateY(8px);pointer-events:none}
+.onboard-seek{padding:0;margin:0 0 3px;height:20px;display:flex;align-items:center}
+.onboard-seek input{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:0;border:0;border-radius:20px;background:linear-gradient(to right,#d40000 0%,#d40000 var(--onboard-progress,0%),#ffffffb0 var(--onboard-progress,0%),#ffffffb0 100%);accent-color:#d40000;cursor:pointer;transition:height .15s}
+.onboard-seek input:hover,.onboard-seek input:focus-visible{height:6px}
+.onboard-seek input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#e00000;border:0;box-shadow:0 0 0 2px #0006}
+.onboard-seek input::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#e00000;border:0}
+.onboard-markers{left:0;right:0;bottom:0;height:2px;opacity:.65}
+.onboard-markers i{height:3px;background:#fff}
+.onboard-toolbar{display:flex;align-items:center;gap:3px;flex-wrap:nowrap;min-height:42px}
+.onboard-toolbar-spacer{flex:1}
+.onboard .onboard-icon-button,.onboard-stage:fullscreen .onboard-icon-button{display:grid;place-items:center;min-height:40px;width:42px;flex:none;padding:0;border:0;border-radius:50%;background:transparent;color:#fff}
+.onboard .onboard-icon-button:hover,.onboard-stage:fullscreen .onboard-icon-button:hover{background:#ffffff29}
+.onboard-clock{margin:0 0 0 8px;color:#fff;font:13px/1.2 Arial,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.onboard-clock span{color:#ddd}
+.onboard-volume{width:72px;height:4px;margin:0 10px 0 2px}
+.onboard-speed select,.onboard-stage:fullscreen .onboard-speed select{min-height:38px;min-width:51px;padding:4px 5px;border:0;background:transparent;color:#fff;font-size:13px;font-weight:600;text-align:center}
+.onboard-speed select:hover{background:#ffffff29}
+.onboard-video-status{top:14px;right:14px;border:0;border-radius:3px;padding:6px 9px;background:#000a;font-size:11px;letter-spacing:.04em}
+.onboard-buffering{position:absolute;z-index:2;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;padding:8px 12px;background:#0009;color:#fff;font-size:13px;border-radius:3px;pointer-events:none}
+.onboard-heading{margin-bottom:18px}.onboard-heading h2{margin:8px 0 6px}
+.onboard-now{margin:14px 0 12px;font-size:13px}.onboard-now span{color:#aaa}
+.onboard-sessions{display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin;border-bottom:1px solid #383838;padding:0 0 8px}
+.onboard-sessions button{flex:none;min-height:38px;padding:7px 12px;border:0;border-radius:4px;background:transparent;text-align:center;font-size:12px}
+.onboard-sessions button small{display:none}.onboard-sessions button[aria-current=true]{background:#333;border:0;color:#fff}
+.onboard-lap-panel{margin-top:22px;padding-top:16px}.onboard-lap-heading{text-transform:none;letter-spacing:0}
+.onboard-laps,.onboard.is-theater .onboard-laps{gap:5px}
+.onboard-laps button{min-height:58px;padding:9px 11px;border-color:#303030;background:#191919}
+.onboard-laps button[aria-current=true]{border-color:#a30000;background:#271818}
+.onboard-laps button strong{font-size:12px}
+@media(max-width:760px){.onboard-controls,.onboard-stage:fullscreen .onboard-controls{padding:22px 8px 5px}.onboard-toolbar{gap:0;min-height:38px}.onboard .onboard-icon-button,.onboard-stage:fullscreen .onboard-icon-button{width:36px;min-height:36px}.onboard-clock{font-size:11px;margin-left:4px}.onboard-volume,.onboard-theater-button{display:none!important}.onboard-speed select{font-size:11px;min-width:42px}.onboard-video-status{top:8px;right:8px;font-size:9px;padding:5px 7px}.onboard-heading{margin-bottom:12px}.onboard-now{font-size:11px}.onboard-sessions button{font-size:11px;padding-inline:9px}}
+@media(prefers-reduced-motion:reduce){.onboard-controls,.onboard-stage:fullscreen .onboard-controls,.onboard-seek input{transition:none}}
+
 /* Available race footage archive. Cards are rendered from published onboard records. */
 .replays-section{min-height:55vh}.replay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.replay-card{display:block;min-width:0;background:#191a1b;border:1px solid #343537;border-radius:10px;overflow:hidden;transition:border-color .2s,transform .2s}.replay-card:hover{border-color:#8b4545;transform:translateY(-3px)}.replay-card:focus-visible{outline:2px solid #fff;outline-offset:4px}.replay-poster{position:relative;aspect-ratio:16/9;background-color:#0a0a0a;background-position:center;background-size:cover;display:grid;place-items:center}.replay-play{display:grid;place-items:center;width:64px;height:64px;border:1px solid #ffffffb3;border-radius:50%;background:#d40000e8;color:#fff;box-shadow:0 8px 32px #0009;transition:transform .2s}.replay-card:hover .replay-play{transform:scale(1.08)}.replay-duration{position:absolute;right:17px;bottom:16px;padding:5px 8px;border-radius:3px;background:#0b0b0be6;font-size:12px;font-variant-numeric:tabular-nums}.replay-copy{padding:25px 27px 23px}.replay-copy h2{font-size:clamp(28px,3vw,43px);text-transform:uppercase;letter-spacing:-.05em;line-height:1;margin:12px 0 9px}.replay-copy p{color:#aaa;margin:0;font-size:13px}.replay-meta{display:flex;align-items:center;gap:17px;border-top:1px solid #38393a;margin-top:25px;padding-top:17px;color:#aeb0b1;font-size:11px}.replay-meta strong{display:inline-flex;align-items:center;gap:7px;color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-left:auto;white-space:nowrap}
 .unrated-driver-list{margin:30px 0;padding:20px 24px;border-top:1px solid #393a3c;border-bottom:1px solid #393a3c}.unrated-driver-list h3{margin:0 0 12px;color:#aeb0b2;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.unrated-driver-list a{display:inline-flex;align-items:center;gap:10px;padding:9px 0;color:#fff;font-size:14px;font-weight:700}.unrated-driver-list a:hover{color:#ff5a5a}
