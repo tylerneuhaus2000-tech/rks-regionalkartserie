@@ -165,6 +165,10 @@ export type LapPaceMetrics2026 = {
   fastestRecordedLapMs: number;
   medianLapMs: number;
   meanLapMs: number;
+  allLapStandardDeviationMs: number;
+  topFiveMeanMs: number;
+  firstFiveMeanMs: number;
+  lastFiveMeanMs: number;
   cleanAverageMs: number;
   standardDeviationMs: number;
   lapCount: number;
@@ -254,6 +258,10 @@ export function lapPaceMetrics2026(eventId: string, driverId: string): LapPaceMe
     fastestRecordedLapMs: Math.min(...times),
     medianLapMs: center,
     meanLapMs: average,
+    allLapStandardDeviationMs: standardDeviation(times)!,
+    topFiveMeanMs: meanValues([...times].sort((a, b) => a - b).slice(0, 5))!,
+    firstFiveMeanMs: meanValues(times.slice(0, 5))!,
+    lastFiveMeanMs: meanValues(times.slice(-5))!,
     cleanAverageMs,
     standardDeviationMs: standardDeviation(cleanTimes)!,
     lapCount: driverLaps.length,

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { season2026 } from "../data/2026/season.ts";
 import { round3DriverId, round3Source } from "../data/2026/round-3.ts";
-import { auditLapTimes2026, eventPaceAnalytics2026, getStandings2026, headToHead2026 } from "../data/2026/selectors.ts";
+import { auditLapTimes2026, eventPaceAnalytics2026, getStandings2026, headToHead2026, lapPaceMetrics2026 } from "../data/2026/selectors.ts";
 import { onboardVideosForEvent2026 } from "../data/2026/onboards.ts";
 
 const r3 = season2026.events.find((event) => event.round === 3);
@@ -68,4 +68,20 @@ test("2026 standings update while rating snapshot and onboard availability stay 
   assert.equal(onboardVideosForEvent2026("2026-R01").length, 1);
   assert.deepEqual(onboardVideosForEvent2026("2026-R02"), []);
   assert.deepEqual(onboardVideosForEvent2026("2026-R03"), []);
+});
+
+test("R3 full-run pace keeps outliers and calculates population statistics", () => {
+  const laps = r3.lapTimes.filter((lap) => lap.driverId === "DRV_TYLER").map((lap) => lap.lapTimeMs);
+  const pace = lapPaceMetrics2026(r3.id, "DRV_TYLER");
+  const mean = laps.reduce((sum, time) => sum + time, 0) / laps.length;
+  const populationSigma = Math.sqrt(laps.reduce((sum, time) => sum + (time - mean) ** 2, 0) / laps.length);
+  const average = (values) => values.reduce((sum, time) => sum + time, 0) / values.length;
+  assert.equal(pace.meanLapMs, mean);
+  assert.equal(pace.allLapStandardDeviationMs, populationSigma);
+  assert.equal(pace.topFiveMeanMs, average([...laps].sort((a, b) => a - b).slice(0, 5)));
+  assert.equal(pace.firstFiveMeanMs, average(laps.slice(0, 5)));
+  assert.equal(pace.lastFiveMeanMs, average(laps.slice(-5)));
+  assert.equal(pace.lapCount, 24);
+  assert.equal(pace.cleanLapCount + pace.outlierLaps.length, pace.lapCount);
+  assert.equal(pace.fastestRecordedLapMs, 47703);
 });
