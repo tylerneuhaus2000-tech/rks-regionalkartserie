@@ -826,6 +826,7 @@ a.driver-rating-card:hover{transform:translateY(-2px);border-color:#65676a;backg
 .onboard-stage:fullscreen .onboard-toolbar button,.onboard-stage:fullscreen .onboard-toolbar select{background:#181818a8;border-color:#ffffff55}
 .onboard-stage:fullscreen .onboard-toolbar button:hover{background:#333}
 .onboard-stage:fullscreen .onboard-markers i{background:#ffffff77}
+.onboard-video-status{position:absolute;z-index:1;top:clamp(10px,2vw,24px);right:clamp(10px,2vw,24px);max-width:calc(100% - 20px);padding:9px 13px;border-left:2px solid #d40000;background:rgba(9,9,10,.78);color:#fff;font-size:clamp(10px,1.1vw,14px);font-weight:700;letter-spacing:.1em;line-height:1.2;pointer-events:none;text-align:right;text-shadow:0 1px 3px #000}
 @media(max-width:760px){
  .onboard{scroll-margin-top:130px;margin-block:32px}
  .onboard-heading{gap:10px}

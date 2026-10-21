@@ -67,7 +67,7 @@ test("2026 standings update while rating snapshot and onboard availability stay 
   assert.equal(standings.find((row) => row.id === "DRV_MIGUEL").points, 6);
   assert.equal(onboardVideosForEvent2026("2026-R01").length, 1);
   assert.deepEqual(onboardVideosForEvent2026("2026-R02"), []);
-  assert.deepEqual(onboardVideosForEvent2026("2026-R03"), []);
+  assert.deepEqual(onboardVideosForEvent2026("2026-R03").map(video => video.driverId), ["DRV_TYLER"]);
 });
 
 test("R3 full-run pace keeps outliers and calculates population statistics", () => {

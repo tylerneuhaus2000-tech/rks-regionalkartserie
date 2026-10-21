@@ -3,9 +3,9 @@ import { raceLapRecords2026 } from "./lap-times.ts";
 export type OnboardAnnotation = { id: string; type: "overtake" | "incident" | "battle" | "fastest-lap" | "race-start" | "finish" | "custom"; timestamp: number; endTimestamp?: number; lap?: number; title: string; description?: string; verified: boolean };
 export type OnboardSession = { id: string; title: string; start: number; end: number; quick: boolean };
 export type OnboardVideo = {
-  id: string; season: number; round: number; eventId: string; driverId: string; kartNumber: number;
+  id: string; season: number; round: number; eventId: string; driverId: string; kartNumber: number | null;
   source: { type: "owner-gopro"; reference: string; playbackUrl: string | null; status: "delivery-pending" | "available"; corrections: string[] };
-  duration: number; poster: string; sessions: OnboardSession[];
+  duration: number; poster: string; sessions: OnboardSession[]; intervalSemantics?: "exact";
   laps: { lapNumber: number; videoStartSeconds: number; videoEndSeconds: number; recordedLapTimeMs: number }[];
   annotations: OnboardAnnotation[];
 };
@@ -30,13 +30,39 @@ export const tylerRound1Onboard: OnboardVideo = {
     return { lapNumber: index+1, videoStartSeconds: start, videoEndSeconds: end, recordedLapTimeMs: recorded.lapTimeMs };
   }), annotations: [],
 };
-export const onboardVideos2026: OnboardVideo[] = [tylerRound1Onboard];
+// Owner-provided estimate for the start of recorded race lap 1. Change this
+// single offset if the video clock is later verified against the footage.
+export const R3_ESTIMATED_LAP1_START_SECONDS = 10 * 60 + 36;
+const r3LapTimesMs = [48357,48657,48306,48821,48542,48768,48752,48963,48666,50720,50447,49035,48093,48603,48447,49149,48174,47703,49733,51028,48358,48710,48950,48651];
+let r3ElapsedMs = 0;
+const r3Laps = r3LapTimesMs.map((lapTimeMs, index) => {
+  const recorded = raceLapRecords2026.find(lap => lap.eventId === "2026-R03" && lap.driverId === "DRV_TYLER" && lap.lapNumber === index + 1);
+  if (!recorded || recorded.lapTimeMs !== lapTimeMs) throw new Error(`R3 Tyler lap ${index + 1} differs from the canonical lap archive`);
+  const videoStartSeconds = R3_ESTIMATED_LAP1_START_SECONDS + r3ElapsedMs / 1000;
+  r3ElapsedMs += lapTimeMs;
+  return { lapNumber: index + 1, videoStartSeconds, videoEndSeconds: R3_ESTIMATED_LAP1_START_SECONDS + r3ElapsedMs / 1000, recordedLapTimeMs: lapTimeMs };
+});
+const r3RaceEndSeconds = R3_ESTIMATED_LAP1_START_SECONDS + r3ElapsedMs / 1000;
+export const tylerRound3Onboard: OnboardVideo = {
+  id: "2026-r3-tyler", season: 2026, round: 3, eventId: "2026-R03", driverId: "DRV_TYLER", kartNumber: 19,
+  source: { type: "owner-gopro", reference: "copy_F1851896-BBA9-4144-9B7F-AD2F6825F93F.MOV", playbackUrl: "https://pub-780b62e2b1144605b0b3486d8ff9432e.r2.dev/2026/round-03/onboard/tyler-1080p.mp4", status: "available", corrections: ["Race lap 1 video start at 10:36 is an owner-supplied estimate; subsequent starts are cumulative recorded lap times."] },
+  duration: 1949.067, poster: "/media/2026/round-3-tyler-onboard.jpg", intervalSemantics: "exact",
+  sessions: [
+    { id: "qualifying", title: "Qualifying", start: 0, end: 496, quick: true },
+    { id: "formation", title: "Formation / pre-race", start: 496, end: R3_ESTIMATED_LAP1_START_SECONDS, quick: true },
+    { id: "race", title: "Race", start: R3_ESTIMATED_LAP1_START_SECONDS, end: r3RaceEndSeconds, quick: true },
+    { id: "finish", title: "Finish / cooldown", start: r3RaceEndSeconds, end: 1949.067, quick: true },
+  ],
+  laps: r3Laps, annotations: [],
+};
+export const onboardVideos2026: OnboardVideo[] = [tylerRound1Onboard, tylerRound3Onboard];
 export const availableOnboardVideos2026 = () => onboardVideos2026.filter(video => video.source.status === "available" && Boolean(video.source.playbackUrl));
 export const onboardVideosForEvent2026 = (eventId: string) => availableOnboardVideos2026().filter(video => video.eventId === eventId);
 export function onboardMoment(video: OnboardVideo, seconds: number) {
   const time = Math.max(0, Math.min(seconds, video.duration));
-  const session = video.sessions.find(s => time >= s.start && (time < s.end+1));
-  const lap = video.laps.find(l => time >= l.videoStartSeconds && time < l.videoEndSeconds+1);
+  const extra = video.intervalSemantics === "exact" ? 0 : 1;
+  const session = video.sessions.find(s => time >= s.start && (time < s.end+extra || s === video.sessions.at(-1) && time === s.end));
+  const lap = video.laps.find(l => time >= l.videoStartSeconds && time < l.videoEndSeconds+extra);
   return { session, lap };
 }
 export function parseOnboardLink(search: string, video: OnboardVideo): number | null {

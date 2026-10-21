@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { tylerRound1Onboard as video, onboardMoment, parseOnboardLink, onboardVideosForEvent2026 } from '../data/2026/onboards.ts';
+import { tylerRound1Onboard as video, tylerRound3Onboard as r3, R3_ESTIMATED_LAP1_START_SECONDS, onboardMoment, parseOnboardLink, onboardVideosForEvent2026 } from '../data/2026/onboards.ts';
 import { raceLapRecords2026 } from '../data/2026/lap-times.ts';
 import { season2026 } from '../data/2026/season.ts';
 test('R1 onboard preserves verified identities and all 19 recorded laps',()=>{
@@ -34,5 +34,19 @@ test('session boundaries cover the owner-supplied source without overlaps',()=>{
  assert.equal(video.source.playbackUrl,'https://pub-780b62e2b1144605b0b3486d8ff9432e.r2.dev/2026/round-01/onboard/tyler-1080p.mp4');assert.equal(video.source.status,'available');
  assert.deepEqual(onboardVideosForEvent2026('2026-R01').map(item=>item.id),[video.id]);
  assert.deepEqual(onboardVideosForEvent2026('2026-R02'),[]);
- assert.deepEqual(onboardVideosForEvent2026('2026-R03'),[]);
+ assert.deepEqual(onboardVideosForEvent2026('2026-R03').map(item=>item.id),[r3.id]);
+});
+test('R3 onboard derives 24 exact lap boundaries from canonical race laps and an explicit estimated offset',()=>{
+ assert.equal(R3_ESTIMATED_LAP1_START_SECONDS,636);
+ assert.equal(r3.driverId,'DRV_TYLER');assert.equal(r3.eventId,'2026-R03');assert.equal(r3.laps.length,24);assert.equal(r3.intervalSemantics,'exact');
+ assert.equal(r3.laps[0].videoStartSeconds,636);assert.equal(r3.laps[17].videoStartSeconds,1466.5);assert.equal(r3.laps[17].recordedLapTimeMs,47703);assert.equal(r3.laps.at(-1).videoEndSeconds,1809.633);
+ for(const lap of r3.laps){const source=raceLapRecords2026.find(item=>item.eventId===r3.eventId&&item.driverId===r3.driverId&&item.lapNumber===lap.lapNumber);assert.equal(lap.recordedLapTimeMs,source.lapTimeMs);assert.equal(onboardMoment(r3,lap.videoStartSeconds).lap?.lapNumber,lap.lapNumber);}
+ for(let index=1;index<r3.laps.length;index++)assert.equal(r3.laps[index].videoStartSeconds,r3.laps[index-1].videoEndSeconds);
+ assert.equal(onboardMoment(r3,495.999).session?.id,'qualifying');assert.equal(onboardMoment(r3,496).session?.id,'formation');
+ assert.equal(onboardMoment(r3,635.999).lap,undefined);assert.equal(onboardMoment(r3,636).lap?.lapNumber,1);
+ assert.equal(onboardMoment(r3,1466.499).lap?.lapNumber,17);assert.equal(onboardMoment(r3,1466.5).lap?.lapNumber,18);
+ assert.equal(onboardMoment(r3,1809.633).lap,undefined);assert.equal(onboardMoment(r3,1809.633).session?.id,'finish');
+ assert.equal(parseOnboardLink('?onboard=tyler&lap=18',r3),1466.5);
+ assert.equal(parseOnboardLink('?onboard=tyler&t=0',r3),0);
+ assert.equal(r3.annotations.length,0);
 });

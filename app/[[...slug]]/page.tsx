@@ -9,7 +9,7 @@ function metadataForSegments(slug: string[]): Metadata {
   if (slug[0] === "races" && slug[1] === "2026" && slug[2] === "round-3") return { title: "Round 3 · Daytona Kart Center Essen, Bahn 2", description: "Tyler won Round 3 at Daytona Essen Bahn 2. Explore the nine-driver classification, qualifying times and 200 recorded race laps." };
   if (slug[0] === "races" && slug[1] === "2026" && slug[2] === "round-4") return { title: "Round 4 · Winterferien NRW 2026", description: "RKS 2026 Round 4 is planned during Winterferien NRW. The exact date and venue will be confirmed." };
   if (slug[0] === "races") return { title: "2026 RKS races", description: "The RKS 2026 calendar, completed race results and event analysis, together in one place." };
-  if (slug[0] === "replays") return { title: "RKS 2026 replays", description: "Watch available RKS onboard recordings, including Tyler's Round 1 drive at Daytona Kart Center Essen." };
+  if (slug[0] === "replays") return { title: "RKS 2026 replays", description: "Watch available RKS onboard recordings from completed rounds at Daytona Kart Center Essen." };
   if (slug[0] === "calendar" && slug[1] === "round-3") return {
     title: "Round 3 · Daytona Kart Center Essen, Bahn 2",
     description: "Tyler won Round 3 at Daytona Essen Bahn 2. View results, qualifying and lap analysis.",
