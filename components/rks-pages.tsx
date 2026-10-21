@@ -72,7 +72,7 @@ function LatestRaceStory() {
   const fastestLap = formatLapTime(event.fastestLap!.timeMs);
   const third = event.results.find((result) => result.position === 3)!;
   const thirdDriver = driverById(third.driverId)!;
-  return <div className="race-story-feature"><div><span className="eyebrow">ROUND {String(event.round).padStart(2, "0")} · {event.format} · {(layoutName2026(event.layoutId) ?? event.courseName ?? "Layout unconfirmed").toUpperCase()}</span><h3>{winner.name} takes the win.</h3><div className="latest-result-podium"><span><small>WINNER</small><b>{winner.name}</b></span><span><small>SECOND</small><b>{runnerUp.name} <i>+{margin.toFixed(2)} s</i></b></span><span><small>THIRD</small><b>{thirdDriver.name}</b></span></div><p>{fastest.name} set the fastest lap ({fastestLap}); {pole.name} started from pole.</p></div><Link href={`/races/2026/round-${event.round}`} className="race-story-cta">View Round {event.round} <ArrowRight size={14}/></Link></div>;
+  return <div className="race-story-feature"><div><span className="eyebrow">ROUND {String(event.round).padStart(2, "0")} · {event.format} · {(layoutName2026(event.layoutId) ?? event.courseName ?? "Layout unconfirmed").toUpperCase()}</span><h3>{winner.name} takes the win.</h3><div className="latest-result-podium"><span><small>WINNER</small><b>{winner.name}</b></span><span><small>SECOND</small><b>{runnerUp.name} <i>+{margin.toFixed(event.round === 3 ? 3 : 2)} s</i></b></span><span><small>THIRD</small><b>{thirdDriver.name}</b></span></div><p>{fastest.name} set the fastest lap ({fastestLap}); {pole.name} started from pole.</p></div><Link href={`/races/2026/round-${event.round}`} className="race-story-cta">View Round {event.round} <ArrowRight size={14}/></Link></div>;
 }
 
 function HomePage() {
