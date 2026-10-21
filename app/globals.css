@@ -816,7 +816,9 @@ a.driver-rating-card:hover{transform:translateY(-2px);border-color:#65676a;backg
 .onboard-stage::backdrop{background:#000}
 .onboard-stage:fullscreen .onboard-screen{position:absolute;inset:0;aspect-ratio:auto;width:100%;height:100%;background:#000}
 .onboard-stage:fullscreen video{display:block;width:100%;height:100%;object-fit:contain}
-.onboard-stage:fullscreen .onboard-controls{position:absolute;bottom:0;left:0;right:0;z-index:2;border:0;background:linear-gradient(transparent,rgba(0,0,0,.88) 40%);padding:28px clamp(12px,2vw,32px) 14px}
+.onboard-stage:fullscreen .onboard-controls{position:absolute;bottom:0;left:0;right:0;z-index:2;border:0;background:linear-gradient(transparent,rgba(0,0,0,.88) 40%);padding:28px clamp(12px,2vw,32px) 14px;transition:opacity .22s ease,transform .22s ease}
+.onboard-stage:fullscreen.controls-hidden{cursor:none}
+.onboard-stage:fullscreen.controls-hidden .onboard-controls:not(:focus-within){opacity:0;transform:translateY(12px);pointer-events:none}
 .onboard-stage:fullscreen .onboard-toolbar button,.onboard-stage:fullscreen .onboard-toolbar select{background:#181818a8;border-color:#ffffff55}
 .onboard-stage:fullscreen .onboard-toolbar button:hover{background:#333}
 .onboard-stage:fullscreen .onboard-markers i{background:#ffffff77}
@@ -839,3 +841,4 @@ a.driver-rating-card:hover{transform:translateY(-2px);border-color:#65676a;backg
  .onboard-laps button span:last-child{text-align:right;margin-top:0}
  .onboard-stage:fullscreen .onboard-controls{padding:18px 10px 10px}
 }
+@media(prefers-reduced-motion:reduce){.onboard-stage:fullscreen .onboard-controls{transition:none}}

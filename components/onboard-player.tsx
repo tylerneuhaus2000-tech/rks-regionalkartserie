@@ -13,6 +13,7 @@ export function OnboardPlayer() {
   const root = useRef<HTMLElement>(null);
   const lapPanel = useRef<HTMLDivElement>(null);
   const pending = useRef<number | null>(null);
+  const controlsTimer = useRef<number | null>(null);
   const [time,setTime] = useState(0);
   const [duration,setDuration] = useState(video.duration);
   const [playing,setPlaying] = useState(false);
@@ -21,6 +22,7 @@ export function OnboardPlayer() {
   const [speed,setSpeed] = useState(1);
   const [theater,setTheater] = useState(false);
   const [fullscreenActive,setFullscreenActive] = useState(false);
+  const [controlsVisible,setControlsVisible] = useState(true);
   const [enhanced,setEnhanced] = useState(false);
   const [error,setError] = useState("");
   const [buffering,setBuffering] = useState(false);
@@ -51,7 +53,12 @@ export function OnboardPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
   useEffect(()=>{document.body.classList.toggle("onboard-theater",theater);return()=>document.body.classList.remove("onboard-theater");},[theater]);
-  useEffect(()=>{const update=()=>setFullscreenActive(document.fullscreenElement===stage.current);document.addEventListener("fullscreenchange",update);return()=>document.removeEventListener("fullscreenchange",update);},[]);
+  useEffect(()=>{const update=()=>{setFullscreenActive(document.fullscreenElement===stage.current);setControlsVisible(true);};document.addEventListener("fullscreenchange",update);return()=>document.removeEventListener("fullscreenchange",update);},[]);
+  useEffect(()=>{
+    if(controlsTimer.current!==null)window.clearTimeout(controlsTimer.current);
+    if(fullscreenActive&&playing&&!buffering)controlsTimer.current=window.setTimeout(()=>setControlsVisible(false),2800);
+    return()=>{if(controlsTimer.current!==null)window.clearTimeout(controlsTimer.current);};
+  },[fullscreenActive,playing,buffering]);
   useEffect(()=>{if(!theater)return;const exit=(event:KeyboardEvent)=>{if(event.key==="Escape")setTheater(false);};window.addEventListener("keydown",exit);return()=>window.removeEventListener("keydown",exit);},[theater]);
   useEffect(()=>{
     const panel=lapPanel.current;
@@ -61,6 +68,12 @@ export function OnboardPlayer() {
     }
   },[active.lap?.lapNumber]);
   async function toggle(){if(!src)return;const node=media.current;if(!node)return;if(node.paused){try{await node.play();setError("");}catch{setError("Playback could not start. Try Play again or check your connection.");}}else node.pause();}
+  function revealControls(){
+    if(!fullscreenActive)return;
+    setControlsVisible(true);
+    if(controlsTimer.current!==null)window.clearTimeout(controlsTimer.current);
+    if(playing&&!buffering)controlsTimer.current=window.setTimeout(()=>setControlsVisible(false),2800);
+  }
   async function fullscreen(){const node=stage.current;if(!node)return;try{if(document.fullscreenElement===node)await document.exitFullscreen();else await node.requestFullscreen({navigationUI:"hide"});}catch{try{media.current?.webkitEnterFullscreen?.();}catch{setError("Fullscreen is unavailable in this browser.");}}}
   return <section id="onboard" ref={root} className={`onboard ${theater?"is-theater":""}`} aria-label="Tyler Round 1 onboard" tabIndex={0} onKeyDown={event=>{
     if((event.target as HTMLElement).closest("input,select,textarea,button,a,[contenteditable=true]"))return;
@@ -71,11 +84,11 @@ export function OnboardPlayer() {
     else if(event.key.toLowerCase()==="t"){event.preventDefault();setTheater(v=>!v);}
   }}>
     <header className="onboard-heading"><div><span className="eyebrow">ROUND 01 · ONBOARD</span><h2><Link href={`/drivers/${driver?.slug ?? "tyler"}`}>{driver?.name}</Link> <span>Daytona · Bahn 2</span></h2><p>{result && `P${result.position} · `}Kart {video.kartNumber} · Fastest recorded lap {formatLapTime(fastest)}</p></div><span className="onboard-runtime">{onboardClock(video.duration)} <small>FULL WEEKEND FOOTAGE</small></span></header>
-    <div className="onboard-layout"><div className="onboard-screen-column"><div className="onboard-stage" ref={stage}>
-      <div className="onboard-screen"><video ref={media} src={src} poster={video.poster} preload="metadata" playsInline controls={!enhanced} aria-label="Tyler onboard, Round 1 HOT 25, 8 April 2026" onTimeUpdate={event=>setTime(event.currentTarget.currentTime)} onLoadedMetadata={event=>{const node=event.currentTarget;if(Number.isFinite(node.duration))setDuration(node.duration);if(pending.current!==null){node.currentTime=pending.current;pending.current=null;}}} onWaiting={()=>setBuffering(true)} onSeeking={()=>setBuffering(true)} onSeeked={()=>setBuffering(false)} onPlaying={()=>setBuffering(false)} onCanPlay={()=>setBuffering(false)} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)} onVolumeChange={event=>{setVolume(event.currentTarget.volume);setMuted(event.currentTarget.muted);}} onError={()=>{if(src)setError("Video could not be loaded. Check your connection and try again.");}}/>{!src&&<div className="onboard-delivery"><b>Original onboard archive</b><span>Streaming version is being prepared.</span><small>Explore the sessions and 19 recorded laps below.</small></div>}</div>
+    <div className="onboard-layout"><div className="onboard-screen-column"><div className={`onboard-stage ${fullscreenActive&&playing&&!buffering&&!controlsVisible?"controls-hidden":""}`} ref={stage} onPointerMove={revealControls} onPointerDown={revealControls} onKeyDownCapture={revealControls} onFocusCapture={revealControls}>
+      <div className="onboard-screen"><video ref={media} src={src} poster={video.poster} preload="metadata" playsInline controls={!enhanced} aria-label="Tyler onboard, Round 1 HOT 25, 8 April 2026" onTimeUpdate={event=>setTime(event.currentTarget.currentTime)} onLoadedMetadata={event=>{const node=event.currentTarget;if(Number.isFinite(node.duration))setDuration(node.duration);if(pending.current!==null){node.currentTime=pending.current;pending.current=null;}}} onWaiting={()=>setBuffering(true)} onSeeking={()=>setBuffering(true)} onSeeked={()=>setBuffering(false)} onPlaying={()=>{setBuffering(false);setControlsVisible(true);}} onCanPlay={()=>setBuffering(false)} onPlay={()=>{setPlaying(true);setControlsVisible(true);}} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)} onVolumeChange={event=>{setVolume(event.currentTarget.volume);setMuted(event.currentTarget.muted);}} onError={()=>{if(src)setError("Video could not be loaded. Check your connection and try again.");}}/>{!src&&<div className="onboard-delivery"><b>Original onboard archive</b><span>Streaming version is being prepared.</span><small>Explore the sessions and 19 recorded laps below.</small></div>}</div>
       {src && buffering && <p className="onboard-note" role="status">Buffering video…</p>}<div className="onboard-controls">
         <div className="onboard-seek"><label className="sr-only" htmlFor="onboard-progress">Video position</label><input id="onboard-progress" type="range" min="0" max={duration} step="0.1" value={time} aria-valuetext={onboardClock(time)} onChange={event=>seek(Number(event.target.value))}/><div className="onboard-markers" aria-hidden="true">{[{time:video.laps[video.laps.length-1].videoEndSeconds,label:"Race finish"},...video.sessions.filter(s=>s.id==="qualifying"||s.id==="formation").map(s=>({time:s.start,label:s.title})),...video.laps.map(l=>({time:l.videoStartSeconds,label:`Lap ${l.lapNumber}`}))].map(m=><i key={m.time} style={{left:`${m.time/duration*100}%`}} title={`${m.label} · ${onboardClock(m.time)}`}/>)}</div></div>
-        <div className="onboard-toolbar"><button disabled={!src} onClick={()=>void toggle()} aria-label={playing?"Pause":"Play"}>{playing?"Pause":"Play"}</button><span className="onboard-clock">{onboardClock(time)} / {onboardClock(duration)}</span><button disabled={!src} onClick={()=>{if(media.current)media.current.muted=!media.current.muted;}} aria-label={muted?"Unmute":"Mute"}>{muted?"Unmute":"Mute"}</button><input className="onboard-volume" type="range" aria-label="Volume" min="0" max="1" step="0.05" value={muted?0:volume} onChange={event=>{if(media.current){media.current.volume=Number(event.target.value);media.current.muted=false;}}}/><label className="onboard-speed"><span className="sr-only">Playback speed</span><select value={speed} onChange={event=>{const next=Number(event.target.value);setSpeed(next);if(media.current)media.current.playbackRate=next;}}>{[0.5,0.75,1,1.25,1.5,2].map(rate=><option key={rate} value={rate}>{rate}×</option>)}</select></label><button onClick={()=>setTheater(v=>!v)} aria-pressed={theater} title="Theater mode (T)">Theater</button><button onClick={()=>void fullscreen()} aria-pressed={fullscreenActive} title="Fullscreen (F)">{fullscreenActive?"Exit fullscreen":"Fullscreen"}</button></div>
+        <div className="onboard-toolbar" onPointerUpCapture={event=>{if(event.target instanceof HTMLButtonElement)event.target.blur();}}><button disabled={!src} onClick={()=>void toggle()} aria-label={playing?"Pause":"Play"}>{playing?"Pause":"Play"}</button><span className="onboard-clock">{onboardClock(time)} / {onboardClock(duration)}</span><button disabled={!src} onClick={()=>{if(media.current)media.current.muted=!media.current.muted;}} aria-label={muted?"Unmute":"Mute"}>{muted?"Unmute":"Mute"}</button><input className="onboard-volume" type="range" aria-label="Volume" min="0" max="1" step="0.05" value={muted?0:volume} onChange={event=>{if(media.current){media.current.volume=Number(event.target.value);media.current.muted=false;}}}/><label className="onboard-speed"><span className="sr-only">Playback speed</span><select value={speed} onChange={event=>{const next=Number(event.target.value);setSpeed(next);if(media.current)media.current.playbackRate=next;}}>{[0.5,0.75,1,1.25,1.5,2].map(rate=><option key={rate} value={rate}>{rate}×</option>)}</select></label><button onClick={()=>setTheater(v=>!v)} aria-pressed={theater} title="Theater mode (T)">Theater</button><button onClick={()=>void fullscreen()} aria-pressed={fullscreenActive} title="Fullscreen (F)">{fullscreenActive?"Exit fullscreen":"Fullscreen"}</button></div>
       </div>
       </div>
       {error&&<p role="alert" className="onboard-error">{error} <button onClick={()=>{media.current?.load();setError("");}}>Retry</button></p>}
