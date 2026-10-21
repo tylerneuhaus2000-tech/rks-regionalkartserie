@@ -138,7 +138,7 @@ export const latestRace = {
 };
 
 export const primaryNav = [
-  ["Home", "/"], ["Championship", "/championship"], ["Races", "/races"], ["Drivers", "/drivers"],
+  ["Home", "/"], ["Championship", "/championship"], ["Races", "/races"], ["Replays", "/replays"], ["Drivers", "/drivers"],
   ["Statistics", "/statistics"], ["Regulations", "/regulations"],
 ] as const;
 

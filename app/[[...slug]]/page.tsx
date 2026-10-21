@@ -9,6 +9,7 @@ function metadataForSegments(slug: string[]): Metadata {
   if (slug[0] === "races" && slug[1] === "2026" && slug[2] === "round-3") return { title: "Round 3 · Daytona Kart Center Essen, Bahn 2", description: "RKS 2026 Round 3 is scheduled for 21 October at 17:00 at Daytona Kart Center Essen, Bahn 2. View event information and the championship battle." };
   if (slug[0] === "races" && slug[1] === "2026" && slug[2] === "round-4") return { title: "Round 4 · Winterferien NRW 2026", description: "RKS 2026 Round 4 is planned during Winterferien NRW. The exact date and venue will be confirmed." };
   if (slug[0] === "races") return { title: "2026 RKS races", description: "The RKS 2026 calendar, completed race results and event analysis, together in one place." };
+  if (slug[0] === "replays") return { title: "RKS 2026 replays", description: "Watch available RKS onboard recordings, including Tyler's Round 1 drive at Daytona Kart Center Essen." };
   if (slug[0] === "calendar" && slug[1] === "round-3") return {
     title: "Round 3 · Daytona Kart Center Essen, Bahn 2",
     description: "RKS 2026 Round 3 is scheduled for 21 October at 17:00 at Daytona Kart Center Essen, Bahn 2. Follow the HOT 25 event preview and title fight.",

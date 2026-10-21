@@ -3,9 +3,9 @@
 import dynamic from "next/dynamic";
 import Link from "@/components/site-link";
 import { useState } from "react";
-import { ArrowRight, Medal, Search } from "lucide-react";
+import { ArrowRight, Medal, Play, Search } from "lucide-react";
 import { season2026 } from "@/data/2026/season";
-import { onboardVideosForEvent2026 } from "@/data/2026/onboards";
+import { availableOnboardVideos2026, onboardClock, onboardVideosForEvent2026 } from "@/data/2026/onboards";
 import { getDriverRating2026, getDriverRatingSnapshot2026 } from "@/data/2026/driver-ratings";
 import { driverById, driverBySlug, driverLapHistory2026, eventLapPace2026, eventPerformanceSummary2026, getStandings2026, headToHead2026, headToHeadPointsDeltaByRound2026, lapPaceMetrics2026, latestCompletedEvent2026, pointsForResult, formatLapTime, statisticsSnapshot2026, titleStatus2026 } from "@/data/2026/selectors";
 import { QualifyingClassification, RaceClassification } from "@/components/season-result-tables";
@@ -158,6 +158,21 @@ function RacesPage() {
       <div className="race-list-number"><small>ROUND</small><strong>{String(event.round).padStart(2, "0")}</strong></div>
       <div className="race-list-copy"><span className="eyebrow">{event.status === "complete" ? `${event.format} · COMPLETED` : "UPCOMING"}</span><h2>{eventTitle}</h2><p>{detail}</p></div>
       <span className="race-list-cta">View event <ArrowRight size={14}/></span>
+    </Link>;
+  })}</div></div></section></>;
+}
+
+function ReplaysPage() {
+  const recordings = availableOnboardVideos2026().map((video) => ({
+    video,
+    event: season2026.events.find((event) => event.id === video.eventId),
+    driver: driverById(video.driverId),
+  })).filter((recording) => recording.event && recording.driver);
+  return <><PageHero kicker="RKS 2026 · VIDEO ARCHIVE" title="Replays" description="Watch recorded RKS footage from completed race weekends."/><section className="section replays-section"><div className="wrap"><SectionHead eyebrow="Available recordings" title="Onboard archive"/><div className="replay-grid">{recordings.map(({ video, event, driver }) => {
+    const layout = event?.layoutId === "DAYTONA-ESSEN-B1-INDOOR" ? season2026.layouts.daytonaEssenB1Indoor.name : season2026.layouts.daytonaEssenB2.name;
+    return <Link className="replay-card" href={`/races/2026/round-${video.round}?onboard=${driver!.slug}#onboard`} key={video.id} aria-label={`Watch ${driver!.name}'s Round ${video.round} onboard replay`}>
+      <div className="replay-poster" style={{ backgroundImage: `linear-gradient(0deg, rgba(0,0,0,.55), transparent 55%), url(${video.poster})` }}><span className="replay-play"><Play size={25} fill="currentColor"/></span><span className="replay-duration">{onboardClock(video.duration)}</span></div>
+      <div className="replay-copy"><span className="eyebrow">2026 · ROUND {String(video.round).padStart(2, "0")} · ONBOARD</span><h2>{driver!.name}</h2><p>{event!.venue} · {layout}</p><div className="replay-meta"><span>{dateLabel(event!.date!)}</span><span>Kart {video.kartNumber}</span><strong>Watch replay <ArrowRight size={15}/></strong></div></div>
     </Link>;
   })}</div></div></section></>;
 }
@@ -355,6 +370,7 @@ export function RksPage({ segments = [] }: { segments?: string[] }) {
   else if (section === "drivers" && rest[0]) { page = <DriverProfile slug={rest[0]}/>; title = `${getDriver(rest[0])?.name ?? "Driver"} · RKS 2026`; }
   else if (section === "teams") { page = <TeamsPage/>; title = "2026 · no team championship"; }
   else if (section === "races") { const year = rest[0]; const match = rest[1]?.match(/^round-(\d)$/); const round = match ? Number(match[1]) : null; page = year === "2026" && round ? <CompletedOrUpcomingRound round={round}/> : year && year !== "2026" ? <SeasonNotPublished year={Number(year)}/> : <RacesPage/>; title = round ? `Round ${round} · RKS 2026` : "RKS 2026 races"; }
+  else if (section === "replays") { page = <ReplaysPage/>; title = "RKS 2026 replays"; }
   else if (section === "calendar") { page = <CalendarPage eventSlug={rest[0]}/>; title = rest[0] ? `Round ${rest[0].replace("round-", "")} · RKS 2026` : "RKS 2026 races"; }
   else if (section === "racehub") { const match = rest[0]?.match(/^round-(\d)$/); page = match ? <CompletedOrUpcomingRound round={Number(match[1])}/> : <RacesPage/>; title = match ? `Round ${match[1]} · RKS 2026` : "RKS 2026 races"; }
   else if (section === "race-center") { page = <RacesPage/>; title = "RKS 2026 races"; }

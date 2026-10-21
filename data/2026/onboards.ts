@@ -31,7 +31,8 @@ export const tylerRound1Onboard: OnboardVideo = {
   }), annotations: [],
 };
 export const onboardVideos2026: OnboardVideo[] = [tylerRound1Onboard];
-export const onboardVideosForEvent2026 = (eventId: string) => onboardVideos2026.filter(video => video.eventId === eventId && video.source.status === "available" && video.source.playbackUrl);
+export const availableOnboardVideos2026 = () => onboardVideos2026.filter(video => video.source.status === "available" && Boolean(video.source.playbackUrl));
+export const onboardVideosForEvent2026 = (eventId: string) => availableOnboardVideos2026().filter(video => video.eventId === eventId);
 export function onboardMoment(video: OnboardVideo, seconds: number) {
   const time = Math.max(0, Math.min(seconds, video.duration));
   const session = video.sessions.find(s => time >= s.start && (time < s.end+1));
