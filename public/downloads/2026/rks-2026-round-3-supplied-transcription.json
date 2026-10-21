@@ -1,0 +1,1452 @@
+{
+  "eventId": "2026-r3-hot25",
+  "round": 3,
+  "date": "2026-10-21",
+  "venue": "Daytona Kart Center Essen",
+  "layout": "Bahn 2 (Indoor/Outdoor configuration not independently confirmed by screenshot)",
+  "format": "HOT25",
+  "sessions": {
+    "qualifyingLocalStart": "17:00",
+    "raceLocalStart": "17:09",
+    "timezone": "Europe/Berlin"
+  },
+  "qualifying": {
+    "status": "complete_with_times",
+    "positions": [
+      {
+        "position": 1,
+        "driver": "Tyler",
+        "time": "48.528",
+        "timeSeconds": 48.528,
+        "gapToPoleSeconds": 0.0
+      },
+      {
+        "position": 2,
+        "driver": "Jonah",
+        "time": "50.054",
+        "timeSeconds": 50.054,
+        "gapToPoleSeconds": 1.526
+      },
+      {
+        "position": 3,
+        "driver": "Lennard W.",
+        "time": "51.221",
+        "timeSeconds": 51.221,
+        "gapToPoleSeconds": 2.693
+      },
+      {
+        "position": 4,
+        "driver": "Peter",
+        "time": "51.676",
+        "timeSeconds": 51.676,
+        "gapToPoleSeconds": 3.148
+      },
+      {
+        "position": 5,
+        "driver": "Elijah",
+        "time": "51.820",
+        "timeSeconds": 51.82,
+        "gapToPoleSeconds": 3.292
+      },
+      {
+        "position": 6,
+        "driver": "Fabian",
+        "time": "52.263",
+        "timeSeconds": 52.263,
+        "gapToPoleSeconds": 3.735
+      },
+      {
+        "position": 7,
+        "driver": "Kilian",
+        "time": "54.381",
+        "timeSeconds": 54.381,
+        "gapToPoleSeconds": 5.853
+      },
+      {
+        "position": 8,
+        "driver": "Miguel",
+        "time": "56.766",
+        "timeSeconds": 56.766,
+        "gapToPoleSeconds": 8.238
+      },
+      {
+        "position": 9,
+        "driver": "Marco",
+        "time": "01:07.812",
+        "timeSeconds": 67.812,
+        "gapToPoleSeconds": 19.284
+      }
+    ],
+    "timesAvailable": true
+  },
+  "race": {
+    "classification": [
+      {
+        "position": 1,
+        "driver": "Tyler",
+        "sourcePseudonym": "TYLER",
+        "kart": 19,
+        "laps": 24,
+        "diff": null,
+        "bestLap": "00:47.703",
+        "bestLapSeconds": 47.703,
+        "qualifyingPosition": 1,
+        "positionsGained": 0
+      },
+      {
+        "position": 2,
+        "driver": "Lennard W.",
+        "sourcePseudonym": "WAG",
+        "kart": 51,
+        "laps": 24,
+        "diff": "+16.208",
+        "bestLap": "00:48.151",
+        "bestLapSeconds": 48.151,
+        "qualifyingPosition": 3,
+        "positionsGained": 1
+      },
+      {
+        "position": 3,
+        "driver": "Jonah",
+        "sourcePseudonym": "JONAH",
+        "kart": 61,
+        "laps": 24,
+        "diff": "+17.288",
+        "bestLap": "00:48.449",
+        "bestLapSeconds": 48.449,
+        "qualifyingPosition": 2,
+        "positionsGained": -1
+      },
+      {
+        "position": 4,
+        "driver": "Fabian",
+        "sourcePseudonym": "FABIAN",
+        "kart": 77,
+        "laps": 23,
+        "diff": "-1 Lap",
+        "bestLap": "00:50.421",
+        "bestLapSeconds": 50.421,
+        "qualifyingPosition": 6,
+        "positionsGained": 2
+      },
+      {
+        "position": 5,
+        "driver": "Peter",
+        "sourcePseudonym": "PETER2303",
+        "kart": 64,
+        "laps": 22,
+        "diff": "-2 Laps",
+        "bestLap": "00:51.214",
+        "bestLapSeconds": 51.214,
+        "qualifyingPosition": 4,
+        "positionsGained": -1
+      },
+      {
+        "position": 6,
+        "driver": "Kilian",
+        "sourcePseudonym": "K",
+        "kart": 50,
+        "laps": 22,
+        "diff": "-2 Laps",
+        "bestLap": "00:50.748",
+        "bestLapSeconds": 50.748,
+        "qualifyingPosition": 7,
+        "positionsGained": 1
+      },
+      {
+        "position": 7,
+        "driver": "Miguel",
+        "sourcePseudonym": "MIGUEL",
+        "kart": 13,
+        "laps": 22,
+        "diff": "-2 Laps",
+        "bestLap": "00:48.993",
+        "bestLapSeconds": 48.993,
+        "qualifyingPosition": 8,
+        "positionsGained": 1
+      },
+      {
+        "position": 8,
+        "driver": "Elijah",
+        "sourcePseudonym": "ELIJAH",
+        "kart": 80,
+        "laps": 20,
+        "diff": "-4 Laps",
+        "bestLap": "00:49.301",
+        "bestLapSeconds": 49.301,
+        "qualifyingPosition": 5,
+        "positionsGained": -3
+      },
+      {
+        "position": 9,
+        "driver": "Marco",
+        "sourcePseudonym": "SCHOKOS",
+        "kart": 27,
+        "laps": 19,
+        "diff": "-5 Laps",
+        "bestLap": "00:53.841",
+        "bestLapSeconds": 53.841,
+        "qualifyingPosition": 9,
+        "positionsGained": 0
+      }
+    ],
+    "lapTimes": {
+      "Tyler": [
+        {
+          "lap": 1,
+          "time": "00:48.357",
+          "timeSeconds": 48.357,
+          "sourceTime": "48.357"
+        },
+        {
+          "lap": 2,
+          "time": "00:48.657",
+          "timeSeconds": 48.657,
+          "sourceTime": "48.657"
+        },
+        {
+          "lap": 3,
+          "time": "00:48.306",
+          "timeSeconds": 48.306,
+          "sourceTime": "48.306"
+        },
+        {
+          "lap": 4,
+          "time": "00:48.821",
+          "timeSeconds": 48.821,
+          "sourceTime": "48.821"
+        },
+        {
+          "lap": 5,
+          "time": "00:48.542",
+          "timeSeconds": 48.542,
+          "sourceTime": "48.542"
+        },
+        {
+          "lap": 6,
+          "time": "00:48.768",
+          "timeSeconds": 48.768,
+          "sourceTime": "48.768"
+        },
+        {
+          "lap": 7,
+          "time": "00:48.752",
+          "timeSeconds": 48.752,
+          "sourceTime": "48.752"
+        },
+        {
+          "lap": 8,
+          "time": "00:48.963",
+          "timeSeconds": 48.963,
+          "sourceTime": "48.963"
+        },
+        {
+          "lap": 9,
+          "time": "00:48.666",
+          "timeSeconds": 48.666,
+          "sourceTime": "48.666"
+        },
+        {
+          "lap": 10,
+          "time": "00:50.720",
+          "timeSeconds": 50.72,
+          "sourceTime": "50.720"
+        },
+        {
+          "lap": 11,
+          "time": "00:50.447",
+          "timeSeconds": 50.447,
+          "sourceTime": "50.447"
+        },
+        {
+          "lap": 12,
+          "time": "00:49.035",
+          "timeSeconds": 49.035,
+          "sourceTime": "49.035"
+        },
+        {
+          "lap": 13,
+          "time": "00:48.093",
+          "timeSeconds": 48.093,
+          "sourceTime": "48.093"
+        },
+        {
+          "lap": 14,
+          "time": "00:48.603",
+          "timeSeconds": 48.603,
+          "sourceTime": "48.603"
+        },
+        {
+          "lap": 15,
+          "time": "00:48.447",
+          "timeSeconds": 48.447,
+          "sourceTime": "48.447"
+        },
+        {
+          "lap": 16,
+          "time": "00:49.149",
+          "timeSeconds": 49.149,
+          "sourceTime": "49.149"
+        },
+        {
+          "lap": 17,
+          "time": "00:48.174",
+          "timeSeconds": 48.174,
+          "sourceTime": "48.174"
+        },
+        {
+          "lap": 18,
+          "time": "00:47.703",
+          "timeSeconds": 47.703,
+          "sourceTime": "47.703"
+        },
+        {
+          "lap": 19,
+          "time": "00:49.733",
+          "timeSeconds": 49.733,
+          "sourceTime": "49.733"
+        },
+        {
+          "lap": 20,
+          "time": "00:51.028",
+          "timeSeconds": 51.028,
+          "sourceTime": "51.028"
+        },
+        {
+          "lap": 21,
+          "time": "00:48.358",
+          "timeSeconds": 48.358,
+          "sourceTime": "48.358"
+        },
+        {
+          "lap": 22,
+          "time": "00:48.710",
+          "timeSeconds": 48.71,
+          "sourceTime": "48.710"
+        },
+        {
+          "lap": 23,
+          "time": "00:48.950",
+          "timeSeconds": 48.95,
+          "sourceTime": "48.950"
+        },
+        {
+          "lap": 24,
+          "time": "00:48.651",
+          "timeSeconds": 48.651,
+          "sourceTime": "48.651"
+        }
+      ],
+      "Lennard W.": [
+        {
+          "lap": 1,
+          "time": "00:50.494",
+          "timeSeconds": 50.494,
+          "sourceTime": "50.494"
+        },
+        {
+          "lap": 2,
+          "time": "00:49.612",
+          "timeSeconds": 49.612,
+          "sourceTime": "49.612"
+        },
+        {
+          "lap": 3,
+          "time": "00:49.566",
+          "timeSeconds": 49.566,
+          "sourceTime": "49.566"
+        },
+        {
+          "lap": 4,
+          "time": "00:49.133",
+          "timeSeconds": 49.133,
+          "sourceTime": "49.133"
+        },
+        {
+          "lap": 5,
+          "time": "00:48.931",
+          "timeSeconds": 48.931,
+          "sourceTime": "48.931"
+        },
+        {
+          "lap": 6,
+          "time": "00:49.237",
+          "timeSeconds": 49.237,
+          "sourceTime": "49.237"
+        },
+        {
+          "lap": 7,
+          "time": "00:48.967",
+          "timeSeconds": 48.967,
+          "sourceTime": "48.967"
+        },
+        {
+          "lap": 8,
+          "time": "00:49.154",
+          "timeSeconds": 49.154,
+          "sourceTime": "49.154"
+        },
+        {
+          "lap": 9,
+          "time": "00:49.616",
+          "timeSeconds": 49.616,
+          "sourceTime": "49.616"
+        },
+        {
+          "lap": 10,
+          "time": "00:49.922",
+          "timeSeconds": 49.922,
+          "sourceTime": "49.922"
+        },
+        {
+          "lap": 11,
+          "time": "00:49.292",
+          "timeSeconds": 49.292,
+          "sourceTime": "49.292"
+        },
+        {
+          "lap": 12,
+          "time": "00:50.284",
+          "timeSeconds": 50.284,
+          "sourceTime": "50.284"
+        },
+        {
+          "lap": 13,
+          "time": "00:48.899",
+          "timeSeconds": 48.899,
+          "sourceTime": "48.899"
+        },
+        {
+          "lap": 14,
+          "time": "00:48.815",
+          "timeSeconds": 48.815,
+          "sourceTime": "48.815"
+        },
+        {
+          "lap": 15,
+          "time": "00:48.635",
+          "timeSeconds": 48.635,
+          "sourceTime": "48.635"
+        },
+        {
+          "lap": 16,
+          "time": "00:49.070",
+          "timeSeconds": 49.07,
+          "sourceTime": "49.070"
+        },
+        {
+          "lap": 17,
+          "time": "00:49.385",
+          "timeSeconds": 49.385,
+          "sourceTime": "49.385"
+        },
+        {
+          "lap": 18,
+          "time": "00:48.540",
+          "timeSeconds": 48.54,
+          "sourceTime": "48.540"
+        },
+        {
+          "lap": 19,
+          "time": "00:54.206",
+          "timeSeconds": 54.206,
+          "sourceTime": "54.206"
+        },
+        {
+          "lap": 20,
+          "time": "00:52.480",
+          "timeSeconds": 52.48,
+          "sourceTime": "52.480"
+        },
+        {
+          "lap": 21,
+          "time": "00:48.920",
+          "timeSeconds": 48.92,
+          "sourceTime": "48.920"
+        },
+        {
+          "lap": 22,
+          "time": "00:48.151",
+          "timeSeconds": 48.151,
+          "sourceTime": "48.151"
+        },
+        {
+          "lap": 23,
+          "time": "00:48.331",
+          "timeSeconds": 48.331,
+          "sourceTime": "48.331"
+        },
+        {
+          "lap": 24,
+          "time": "00:48.682",
+          "timeSeconds": 48.682,
+          "sourceTime": "48.682"
+        }
+      ],
+      "Jonah": [
+        {
+          "lap": 1,
+          "time": "00:49.215",
+          "timeSeconds": 49.215,
+          "sourceTime": "49.215"
+        },
+        {
+          "lap": 2,
+          "time": "00:48.950",
+          "timeSeconds": 48.95,
+          "sourceTime": "48.950"
+        },
+        {
+          "lap": 3,
+          "time": "00:49.019",
+          "timeSeconds": 49.019,
+          "sourceTime": "49.019"
+        },
+        {
+          "lap": 4,
+          "time": "00:49.106",
+          "timeSeconds": 49.106,
+          "sourceTime": "49.106"
+        },
+        {
+          "lap": 5,
+          "time": "00:50.698",
+          "timeSeconds": 50.698,
+          "sourceTime": "50.698"
+        },
+        {
+          "lap": 6,
+          "time": "00:49.649",
+          "timeSeconds": 49.649,
+          "sourceTime": "49.649"
+        },
+        {
+          "lap": 7,
+          "time": "00:48.920",
+          "timeSeconds": 48.92,
+          "sourceTime": "48.920"
+        },
+        {
+          "lap": 8,
+          "time": "00:48.951",
+          "timeSeconds": 48.951,
+          "sourceTime": "48.951"
+        },
+        {
+          "lap": 9,
+          "time": "00:50.228",
+          "timeSeconds": 50.228,
+          "sourceTime": "50.228"
+        },
+        {
+          "lap": 10,
+          "time": "00:50.038",
+          "timeSeconds": 50.038,
+          "sourceTime": "50.038"
+        },
+        {
+          "lap": 11,
+          "time": "00:48.947",
+          "timeSeconds": 48.947,
+          "sourceTime": "48.947"
+        },
+        {
+          "lap": 12,
+          "time": "00:49.381",
+          "timeSeconds": 49.381,
+          "sourceTime": "49.381"
+        },
+        {
+          "lap": 13,
+          "time": "00:49.060",
+          "timeSeconds": 49.06,
+          "sourceTime": "49.060"
+        },
+        {
+          "lap": 14,
+          "time": "00:49.038",
+          "timeSeconds": 49.038,
+          "sourceTime": "49.038"
+        },
+        {
+          "lap": 15,
+          "time": "00:48.796",
+          "timeSeconds": 48.796,
+          "sourceTime": "48.796"
+        },
+        {
+          "lap": 16,
+          "time": "00:49.331",
+          "timeSeconds": 49.331,
+          "sourceTime": "49.331"
+        },
+        {
+          "lap": 17,
+          "time": "00:49.272",
+          "timeSeconds": 49.272,
+          "sourceTime": "49.272"
+        },
+        {
+          "lap": 18,
+          "time": "00:48.589",
+          "timeSeconds": 48.589,
+          "sourceTime": "48.589"
+        },
+        {
+          "lap": 19,
+          "time": "00:54.238",
+          "timeSeconds": 54.238,
+          "sourceTime": "54.238"
+        },
+        {
+          "lap": 20,
+          "time": "00:52.753",
+          "timeSeconds": 52.753,
+          "sourceTime": "52.753"
+        },
+        {
+          "lap": 21,
+          "time": "00:50.359",
+          "timeSeconds": 50.359,
+          "sourceTime": "50.359"
+        },
+        {
+          "lap": 22,
+          "time": "00:48.488",
+          "timeSeconds": 48.488,
+          "sourceTime": "48.488"
+        },
+        {
+          "lap": 23,
+          "time": "00:48.451",
+          "timeSeconds": 48.451,
+          "sourceTime": "48.451"
+        },
+        {
+          "lap": 24,
+          "time": "00:48.449",
+          "timeSeconds": 48.449,
+          "sourceTime": "48.449"
+        }
+      ],
+      "Fabian": [
+        {
+          "lap": 1,
+          "time": "00:52.547",
+          "timeSeconds": 52.547,
+          "sourceTime": "52.547"
+        },
+        {
+          "lap": 2,
+          "time": "00:51.310",
+          "timeSeconds": 51.31,
+          "sourceTime": "51.310"
+        },
+        {
+          "lap": 3,
+          "time": "00:52.053",
+          "timeSeconds": 52.053,
+          "sourceTime": "52.053"
+        },
+        {
+          "lap": 4,
+          "time": "00:52.029",
+          "timeSeconds": 52.029,
+          "sourceTime": "52.029"
+        },
+        {
+          "lap": 5,
+          "time": "00:52.604",
+          "timeSeconds": 52.604,
+          "sourceTime": "52.604"
+        },
+        {
+          "lap": 6,
+          "time": "00:51.369",
+          "timeSeconds": 51.369,
+          "sourceTime": "51.369"
+        },
+        {
+          "lap": 7,
+          "time": "00:51.439",
+          "timeSeconds": 51.439,
+          "sourceTime": "51.439"
+        },
+        {
+          "lap": 8,
+          "time": "00:51.962",
+          "timeSeconds": 51.962,
+          "sourceTime": "51.962"
+        },
+        {
+          "lap": 9,
+          "time": "00:53.378",
+          "timeSeconds": 53.378,
+          "sourceTime": "53.378"
+        },
+        {
+          "lap": 10,
+          "time": "00:53.300",
+          "timeSeconds": 53.3,
+          "sourceTime": "53.300"
+        },
+        {
+          "lap": 11,
+          "time": "00:52.297",
+          "timeSeconds": 52.297,
+          "sourceTime": "52.297"
+        },
+        {
+          "lap": 12,
+          "time": "00:51.430",
+          "timeSeconds": 51.43,
+          "sourceTime": "51.430"
+        },
+        {
+          "lap": 13,
+          "time": "00:50.421",
+          "timeSeconds": 50.421,
+          "sourceTime": "50.421"
+        },
+        {
+          "lap": 14,
+          "time": "00:50.921",
+          "timeSeconds": 50.921,
+          "sourceTime": "50.921"
+        },
+        {
+          "lap": 15,
+          "time": "00:51.502",
+          "timeSeconds": 51.502,
+          "sourceTime": "51.502"
+        },
+        {
+          "lap": 16,
+          "time": "00:51.520",
+          "timeSeconds": 51.52,
+          "sourceTime": "51.520"
+        },
+        {
+          "lap": 17,
+          "time": "00:51.914",
+          "timeSeconds": 51.914,
+          "sourceTime": "51.914"
+        },
+        {
+          "lap": 18,
+          "time": "00:56.549",
+          "timeSeconds": 56.549,
+          "sourceTime": "56.549"
+        },
+        {
+          "lap": 19,
+          "time": "00:54.894",
+          "timeSeconds": 54.894,
+          "sourceTime": "54.894"
+        },
+        {
+          "lap": 20,
+          "time": "00:53.059",
+          "timeSeconds": 53.059,
+          "sourceTime": "53.059"
+        },
+        {
+          "lap": 21,
+          "time": "00:50.673",
+          "timeSeconds": 50.673,
+          "sourceTime": "50.673"
+        },
+        {
+          "lap": 22,
+          "time": "00:50.909",
+          "timeSeconds": 50.909,
+          "sourceTime": "50.909"
+        },
+        {
+          "lap": 23,
+          "time": "00:50.926",
+          "timeSeconds": 50.926,
+          "sourceTime": "50.926"
+        }
+      ],
+      "Peter": [
+        {
+          "lap": 1,
+          "time": "00:53.379",
+          "timeSeconds": 53.379,
+          "sourceTime": "53.379"
+        },
+        {
+          "lap": 2,
+          "time": "00:52.022",
+          "timeSeconds": 52.022,
+          "sourceTime": "52.022"
+        },
+        {
+          "lap": 3,
+          "time": "00:51.214",
+          "timeSeconds": 51.214,
+          "sourceTime": "51.214"
+        },
+        {
+          "lap": 4,
+          "time": "00:52.273",
+          "timeSeconds": 52.273,
+          "sourceTime": "52.273"
+        },
+        {
+          "lap": 5,
+          "time": "00:51.694",
+          "timeSeconds": 51.694,
+          "sourceTime": "51.694"
+        },
+        {
+          "lap": 6,
+          "time": "00:51.884",
+          "timeSeconds": 51.884,
+          "sourceTime": "51.884"
+        },
+        {
+          "lap": 7,
+          "time": "00:53.007",
+          "timeSeconds": 53.007,
+          "sourceTime": "53.007"
+        },
+        {
+          "lap": 8,
+          "time": "00:52.289",
+          "timeSeconds": 52.289,
+          "sourceTime": "52.289"
+        },
+        {
+          "lap": 9,
+          "time": "00:53.090",
+          "timeSeconds": 53.09,
+          "sourceTime": "53.090"
+        },
+        {
+          "lap": 10,
+          "time": "00:52.748",
+          "timeSeconds": 52.748,
+          "sourceTime": "52.748"
+        },
+        {
+          "lap": 11,
+          "time": "00:52.977",
+          "timeSeconds": 52.977,
+          "sourceTime": "52.977"
+        },
+        {
+          "lap": 12,
+          "time": "00:53.329",
+          "timeSeconds": 53.329,
+          "sourceTime": "53.329"
+        },
+        {
+          "lap": 13,
+          "time": "00:53.040",
+          "timeSeconds": 53.04,
+          "sourceTime": "53.040"
+        },
+        {
+          "lap": 14,
+          "time": "00:51.993",
+          "timeSeconds": 51.993,
+          "sourceTime": "51.993"
+        },
+        {
+          "lap": 15,
+          "time": "00:52.637",
+          "timeSeconds": 52.637,
+          "sourceTime": "52.637"
+        },
+        {
+          "lap": 16,
+          "time": "00:52.760",
+          "timeSeconds": 52.76,
+          "sourceTime": "52.760"
+        },
+        {
+          "lap": 17,
+          "time": "00:52.875",
+          "timeSeconds": 52.875,
+          "sourceTime": "52.875"
+        },
+        {
+          "lap": 18,
+          "time": "00:57.553",
+          "timeSeconds": 57.553,
+          "sourceTime": "57.553"
+        },
+        {
+          "lap": 19,
+          "time": "00:52.813",
+          "timeSeconds": 52.813,
+          "sourceTime": "52.813"
+        },
+        {
+          "lap": 20,
+          "time": "00:55.121",
+          "timeSeconds": 55.121,
+          "sourceTime": "55.121"
+        },
+        {
+          "lap": 21,
+          "time": "00:52.126",
+          "timeSeconds": 52.126,
+          "sourceTime": "52.126"
+        },
+        {
+          "lap": 22,
+          "time": "00:52.216",
+          "timeSeconds": 52.216,
+          "sourceTime": "52.216"
+        }
+      ],
+      "Kilian": [
+        {
+          "lap": 1,
+          "time": "00:56.688",
+          "timeSeconds": 56.688,
+          "sourceTime": "56.688"
+        },
+        {
+          "lap": 2,
+          "time": "00:56.030",
+          "timeSeconds": 56.03,
+          "sourceTime": "56.030"
+        },
+        {
+          "lap": 3,
+          "time": "00:55.807",
+          "timeSeconds": 55.807,
+          "sourceTime": "55.807"
+        },
+        {
+          "lap": 4,
+          "time": "00:57.059",
+          "timeSeconds": 57.059,
+          "sourceTime": "57.059"
+        },
+        {
+          "lap": 5,
+          "time": "00:55.409",
+          "timeSeconds": 55.409,
+          "sourceTime": "55.409"
+        },
+        {
+          "lap": 6,
+          "time": "00:53.809",
+          "timeSeconds": 53.809,
+          "sourceTime": "53.809"
+        },
+        {
+          "lap": 7,
+          "time": "00:53.989",
+          "timeSeconds": 53.989,
+          "sourceTime": "53.989"
+        },
+        {
+          "lap": 8,
+          "time": "00:55.686",
+          "timeSeconds": 55.686,
+          "sourceTime": "55.686"
+        },
+        {
+          "lap": 9,
+          "time": "00:55.364",
+          "timeSeconds": 55.364,
+          "sourceTime": "55.364"
+        },
+        {
+          "lap": 10,
+          "time": "00:54.081",
+          "timeSeconds": 54.081,
+          "sourceTime": "54.081"
+        },
+        {
+          "lap": 11,
+          "time": "00:53.134",
+          "timeSeconds": 53.134,
+          "sourceTime": "53.134"
+        },
+        {
+          "lap": 12,
+          "time": "00:52.286",
+          "timeSeconds": 52.286,
+          "sourceTime": "52.286"
+        },
+        {
+          "lap": 13,
+          "time": "00:53.776",
+          "timeSeconds": 53.776,
+          "sourceTime": "53.776"
+        },
+        {
+          "lap": 14,
+          "time": "00:51.878",
+          "timeSeconds": 51.878,
+          "sourceTime": "51.878"
+        },
+        {
+          "lap": 15,
+          "time": "00:53.116",
+          "timeSeconds": 53.116,
+          "sourceTime": "53.116"
+        },
+        {
+          "lap": 16,
+          "time": "00:51.049",
+          "timeSeconds": 51.049,
+          "sourceTime": "51.049"
+        },
+        {
+          "lap": 17,
+          "time": "00:51.940",
+          "timeSeconds": 51.94,
+          "sourceTime": "51.940"
+        },
+        {
+          "lap": 18,
+          "time": "00:53.675",
+          "timeSeconds": 53.675,
+          "sourceTime": "53.675"
+        },
+        {
+          "lap": 19,
+          "time": "00:50.748",
+          "timeSeconds": 50.748,
+          "sourceTime": "50.748"
+        },
+        {
+          "lap": 20,
+          "time": "00:51.723",
+          "timeSeconds": 51.723,
+          "sourceTime": "51.723"
+        },
+        {
+          "lap": 21,
+          "time": "00:51.535",
+          "timeSeconds": 51.535,
+          "sourceTime": "51.535"
+        },
+        {
+          "lap": 22,
+          "time": "00:52.279",
+          "timeSeconds": 52.279,
+          "sourceTime": "52.279"
+        }
+      ],
+      "Miguel": [
+        {
+          "lap": 1,
+          "time": "00:54.500",
+          "timeSeconds": 54.5,
+          "sourceTime": "54.500"
+        },
+        {
+          "lap": 2,
+          "time": "00:52.117",
+          "timeSeconds": 52.117,
+          "sourceTime": "52.117"
+        },
+        {
+          "lap": 3,
+          "time": "00:50.789",
+          "timeSeconds": 50.789,
+          "sourceTime": "50.789"
+        },
+        {
+          "lap": 4,
+          "time": "00:51.056",
+          "timeSeconds": 51.056,
+          "sourceTime": "51.056"
+        },
+        {
+          "lap": 5,
+          "time": "00:50.047",
+          "timeSeconds": 50.047,
+          "sourceTime": "50.047"
+        },
+        {
+          "lap": 6,
+          "time": "00:50.503",
+          "timeSeconds": 50.503,
+          "sourceTime": "50.503"
+        },
+        {
+          "lap": 7,
+          "time": "00:50.088",
+          "timeSeconds": 50.088,
+          "sourceTime": "50.088"
+        },
+        {
+          "lap": 8,
+          "time": "00:51.371",
+          "timeSeconds": 51.371,
+          "sourceTime": "51.371"
+        },
+        {
+          "lap": 9,
+          "time": "00:49.421",
+          "timeSeconds": 49.421,
+          "sourceTime": "49.421"
+        },
+        {
+          "lap": 10,
+          "time": "00:50.912",
+          "timeSeconds": 50.912,
+          "sourceTime": "50.912"
+        },
+        {
+          "lap": 11,
+          "time": "00:50.938",
+          "timeSeconds": 50.938,
+          "sourceTime": "50.938"
+        },
+        {
+          "lap": 12,
+          "time": "00:49.349",
+          "timeSeconds": 49.349,
+          "sourceTime": "49.349"
+        },
+        {
+          "lap": 13,
+          "time": "00:49.164",
+          "timeSeconds": 49.164,
+          "sourceTime": "49.164"
+        },
+        {
+          "lap": 14,
+          "time": "00:48.993",
+          "timeSeconds": 48.993,
+          "sourceTime": "48.993"
+        },
+        {
+          "lap": 15,
+          "time": "00:49.573",
+          "timeSeconds": 49.573,
+          "sourceTime": "49.573"
+        },
+        {
+          "lap": 16,
+          "time": "00:49.793",
+          "timeSeconds": 49.793,
+          "sourceTime": "49.793"
+        },
+        {
+          "lap": 17,
+          "time": "00:50.443",
+          "timeSeconds": 50.443,
+          "sourceTime": "50.443"
+        },
+        {
+          "lap": 18,
+          "time": "02:04.625",
+          "timeSeconds": 124.625,
+          "sourceTime": "2:04.625"
+        },
+        {
+          "lap": 19,
+          "time": "00:50.794",
+          "timeSeconds": 50.794,
+          "sourceTime": "50.794"
+        },
+        {
+          "lap": 20,
+          "time": "00:49.148",
+          "timeSeconds": 49.148,
+          "sourceTime": "49.148"
+        },
+        {
+          "lap": 21,
+          "time": "00:49.087",
+          "timeSeconds": 49.087,
+          "sourceTime": "49.087"
+        },
+        {
+          "lap": 22,
+          "time": "00:49.336",
+          "timeSeconds": 49.336,
+          "sourceTime": "49.336"
+        }
+      ],
+      "Elijah": [
+        {
+          "lap": 1,
+          "time": "00:51.272",
+          "timeSeconds": 51.272,
+          "sourceTime": "51.272"
+        },
+        {
+          "lap": 2,
+          "time": "00:51.073",
+          "timeSeconds": 51.073,
+          "sourceTime": "51.073"
+        },
+        {
+          "lap": 3,
+          "time": "00:50.859",
+          "timeSeconds": 50.859,
+          "sourceTime": "50.859"
+        },
+        {
+          "lap": 4,
+          "time": "00:52.157",
+          "timeSeconds": 52.157,
+          "sourceTime": "52.157"
+        },
+        {
+          "lap": 5,
+          "time": "00:51.525",
+          "timeSeconds": 51.525,
+          "sourceTime": "51.525"
+        },
+        {
+          "lap": 6,
+          "time": "00:51.398",
+          "timeSeconds": 51.398,
+          "sourceTime": "51.398"
+        },
+        {
+          "lap": 7,
+          "time": "00:51.493",
+          "timeSeconds": 51.493,
+          "sourceTime": "51.493"
+        },
+        {
+          "lap": 8,
+          "time": "03:21.970",
+          "timeSeconds": 201.97,
+          "sourceTime": "3:21.970"
+        },
+        {
+          "lap": 9,
+          "time": "00:51.167",
+          "timeSeconds": 51.167,
+          "sourceTime": "51.167"
+        },
+        {
+          "lap": 10,
+          "time": "00:51.230",
+          "timeSeconds": 51.23,
+          "sourceTime": "51.230"
+        },
+        {
+          "lap": 11,
+          "time": "00:50.601",
+          "timeSeconds": 50.601,
+          "sourceTime": "50.601"
+        },
+        {
+          "lap": 12,
+          "time": "00:50.994",
+          "timeSeconds": 50.994,
+          "sourceTime": "50.994"
+        },
+        {
+          "lap": 13,
+          "time": "00:50.411",
+          "timeSeconds": 50.411,
+          "sourceTime": "50.411"
+        },
+        {
+          "lap": 14,
+          "time": "00:51.679",
+          "timeSeconds": 51.679,
+          "sourceTime": "51.679"
+        },
+        {
+          "lap": 15,
+          "time": "00:50.721",
+          "timeSeconds": 50.721,
+          "sourceTime": "50.721"
+        },
+        {
+          "lap": 16,
+          "time": "00:50.923",
+          "timeSeconds": 50.923,
+          "sourceTime": "50.923"
+        },
+        {
+          "lap": 17,
+          "time": "00:50.753",
+          "timeSeconds": 50.753,
+          "sourceTime": "50.753"
+        },
+        {
+          "lap": 18,
+          "time": "00:50.975",
+          "timeSeconds": 50.975,
+          "sourceTime": "50.975"
+        },
+        {
+          "lap": 19,
+          "time": "00:50.274",
+          "timeSeconds": 50.274,
+          "sourceTime": "50.274"
+        },
+        {
+          "lap": 20,
+          "time": "00:49.301",
+          "timeSeconds": 49.301,
+          "sourceTime": "49.301"
+        }
+      ],
+      "Marco": [
+        {
+          "lap": 1,
+          "time": "01:04.267",
+          "timeSeconds": 64.267,
+          "sourceTime": "1:04.267"
+        },
+        {
+          "lap": 2,
+          "time": "00:58.127",
+          "timeSeconds": 58.127,
+          "sourceTime": "58.127"
+        },
+        {
+          "lap": 3,
+          "time": "00:57.001",
+          "timeSeconds": 57.001,
+          "sourceTime": "57.001"
+        },
+        {
+          "lap": 4,
+          "time": "00:57.147",
+          "timeSeconds": 57.147,
+          "sourceTime": "57.147"
+        },
+        {
+          "lap": 5,
+          "time": "00:57.652",
+          "timeSeconds": 57.652,
+          "sourceTime": "57.652"
+        },
+        {
+          "lap": 6,
+          "time": "01:01.557",
+          "timeSeconds": 61.557,
+          "sourceTime": "1:01.557"
+        },
+        {
+          "lap": 7,
+          "time": "01:00.249",
+          "timeSeconds": 60.249,
+          "sourceTime": "1:00.249"
+        },
+        {
+          "lap": 8,
+          "time": "00:56.113",
+          "timeSeconds": 56.113,
+          "sourceTime": "56.113"
+        },
+        {
+          "lap": 9,
+          "time": "00:56.494",
+          "timeSeconds": 56.494,
+          "sourceTime": "56.494"
+        },
+        {
+          "lap": 10,
+          "time": "00:55.590",
+          "timeSeconds": 55.59,
+          "sourceTime": "55.590"
+        },
+        {
+          "lap": 11,
+          "time": "00:54.372",
+          "timeSeconds": 54.372,
+          "sourceTime": "54.372"
+        },
+        {
+          "lap": 12,
+          "time": "00:54.512",
+          "timeSeconds": 54.512,
+          "sourceTime": "54.512"
+        },
+        {
+          "lap": 13,
+          "time": "00:55.510",
+          "timeSeconds": 55.51,
+          "sourceTime": "55.510"
+        },
+        {
+          "lap": 14,
+          "time": "00:54.890",
+          "timeSeconds": 54.89,
+          "sourceTime": "54.890"
+        },
+        {
+          "lap": 15,
+          "time": "00:55.826",
+          "timeSeconds": 55.826,
+          "sourceTime": "55.826"
+        },
+        {
+          "lap": 16,
+          "time": "02:10.058",
+          "timeSeconds": 130.058,
+          "sourceTime": "2:10.058"
+        },
+        {
+          "lap": 17,
+          "time": "00:58.755",
+          "timeSeconds": 58.755,
+          "sourceTime": "58.755"
+        },
+        {
+          "lap": 18,
+          "time": "00:53.841",
+          "timeSeconds": 53.841,
+          "sourceTime": "53.841"
+        },
+        {
+          "lap": 19,
+          "time": "00:55.512",
+          "timeSeconds": 55.512,
+          "sourceTime": "55.512"
+        }
+      ]
+    },
+    "positionByLapAvailable": false,
+    "totalLapsRecorded": 200,
+    "fastestLap": {
+      "driver": "Tyler",
+      "lap": 18,
+      "time": "00:47.703",
+      "kart": 19
+    },
+    "gapSemantics": "For same-lap finishers, absolute deficit to winner; lapped finishers displayed as whole laps. Official screenshots do not specify race total-time for finishers."
+  },
+  "aliases": {
+    "TYLER": "Tyler",
+    "WAG": "Lennard W.",
+    "JONAH": "Jonah",
+    "FABIAN": "Fabian",
+    "PETER2303": "Peter",
+    "K": "Kilian",
+    "MIGUEL": "Miguel",
+    "ELIJAH": "Elijah",
+    "SCHOKOS": "Marco"
+  },
+  "source": {
+    "files": [
+      "IMG_6869.png",
+      "IMG_6867.png",
+      "IMG_6866.png"
+    ],
+    "type": "Daytona / Apex Timing results screenshots",
+    "lapTimeOrder": "Rows displayed in blocks 1–10, 11–20, 21–end, read from left to right",
+    "qualifyingAndRaceScreen": "IMG_6869.png, IMG_6867.png",
+    "officialRaceSheet": "IMG_6866.png"
+  },
+  "notes": [
+    "No live position-by-lap telemetry supplied: do not infer actual overtakes, leader changes or lap-by-lap race gaps.",
+    "Lap times are displayed to milliseconds and transcribed as printed.",
+    "Long laps are not deleted from raw data; mark as outliers in derived statistics only.",
+    "The R3 layout is named Bahn 2 in the source; indoor-only running is not explicitly established by the supplied results.",
+    "R1 was a longer Bahn 2 layout than R3, according to different published lap scales, but exact equivalence not established; avoid raw cross-layout lap-time comparisons."
+  ]
+}

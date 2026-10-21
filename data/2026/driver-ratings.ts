@@ -84,7 +84,11 @@ export function validateDriverRatingSnapshot2026(snapshot: RksDriverRatingSnapsh
     }
     if (Object.keys(rating.categories).sort().join(",") !== "consistency,pace,peak,qualifying,race") errors.push(`${rating.driverId}: category set is incomplete`);
   }
-  if (entries.length !== season2026.drivers.length) errors.push(`Expected ${season2026.drivers.length} ratings, found ${entries.length}`);
+  // A snapshot covers the entrants known at its round, not later debutants.
+  if (snapshot === "afterRound2") {
+    const eligible = new Set(season2026.events.filter((event) => event.round <= 2).flatMap((event) => event.results.map((result) => result.driverId)));
+    if (entries.length !== eligible.size || [...eligible].some((id) => !ids.has(id))) errors.push(`Expected ${eligible.size} after-Round-2 entrant ratings, found ${entries.length}`);
+  }
   return { valid: errors.length === 0, errors };
 }
 

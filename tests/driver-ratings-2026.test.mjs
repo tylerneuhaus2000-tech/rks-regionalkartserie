@@ -76,5 +76,5 @@ test("driver rating data does not replace championship values or verified timing
   assert.deepEqual(["DRV_TYLER", "DRV_JONAH", "DRV_LENNARD_F"].map((id) => {
     const results = events.filter((event) => event.status === "complete").flatMap((event) => event.results.filter((result) => result.driverId === id).map((result) => (event.pointsByPosition?.[result.position - 1] ?? season2026.pointsByPosition[result.position - 1] ?? 0) + (event.fastestLap?.driverId === id && result.position <= 10 ? season2026.fastestLapBonus : 0)));
     return results.reduce((sum, value) => sum + value, 0);
-  }), [45, 43, 27]);
+  }), [71, 58, 27]);
 });

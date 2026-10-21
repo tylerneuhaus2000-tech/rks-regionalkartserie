@@ -19,10 +19,10 @@ import {
 
 test("points per start and classified participation rates use starts as their denominator", () => {
   const tyler = driverStats2026("DRV_TYLER");
-  assert.equal(tyler.points, 45);
-  assert.equal(tyler.starts, 2);
-  assert.equal(tyler.pointsPerStart, 22.5);
-  assert.equal(tyler.winRatePercent, 50);
+  assert.equal(tyler.points, 71);
+  assert.equal(tyler.starts, 3);
+  assert.equal(tyler.pointsPerStart, 71 / 3);
+  assert.equal(tyler.winRatePercent, 2 / 3 * 100);
   assert.equal(tyler.podiumRatePercent, 100);
   assert.equal(tyler.fastestLapRatePercent, 100);
   assert.equal(driverStats2026("DRV_HENRY").pointsPerStart, 0);
@@ -32,10 +32,10 @@ test("qualifying position changes use only published qualifying entries", () => 
   const tyler = driverStats2026("DRV_TYLER");
   const jonah = driverStats2026("DRV_JONAH");
   const henry = driverStats2026("DRV_HENRY");
-  assert.deepEqual(tyler.positionsGained.map((entry) => [entry.round, entry.qualifyingPosition, entry.finishPosition, entry.positionsGained]), [[1, 2, 1, 1], [2, 2, 2, 0]]);
-  assert.equal(tyler.averagePositionsGained, 0.5);
-  assert.deepEqual(jonah.positionsGained.map((entry) => entry.positionsGained), [-1, 2]);
-  assert.equal(jonah.qualifyingSamples, 2);
+  assert.deepEqual(tyler.positionsGained.map((entry) => [entry.round, entry.qualifyingPosition, entry.finishPosition, entry.positionsGained]), [[1, 2, 1, 1], [2, 2, 2, 0], [3, 1, 1, 0]]);
+  assert.equal(tyler.averagePositionsGained, 1 / 3);
+  assert.deepEqual(jonah.positionsGained.map((entry) => entry.positionsGained), [-1, 2, -1]);
+  assert.equal(jonah.qualifyingSamples, 3);
   assert.equal(henry.qualifyingSamples, 0);
   assert.equal(henry.averagePositionsGained, null);
   assert.equal(season2026.events.find((event) => event.round === 1).qualifying.length, 3, "R1 remains partial; no P4+ positions are inferred");
@@ -60,7 +60,7 @@ test("clean race pace and consistency rankings are event-specific", () => {
   assert.equal(louis.recordedLaps, 26);
   assert.equal(louis.winnerLaps, 27);
   assert.ok(Math.abs(louis.lapCompletionPercent - (26 / 27 * 100)) < 1e-10);
-  assert.equal(eventPaceAnalytics2026("2026-R03").length, 0);
+  assert.equal(eventPaceAnalytics2026("2026-R03").length, 9);
 });
 
 test("pace window, peak gap, development, and clean percentiles use the shared clean-lap set", () => {
@@ -95,22 +95,22 @@ test("event performance summary reports official result values and available ana
 
 test("head-to-head records count only events with both required data points", () => {
   const comparison = headToHead2026("DRV_TYLER", "DRV_JONAH");
-  assert.deepEqual(comparison.records.raceFinish, { a: 1, b: 1, ties: 0, samples: 2 });
-  assert.deepEqual(comparison.records.qualifying, { a: 1, b: 1, ties: 0, samples: 2 });
-  assert.deepEqual(comparison.records.fastestLap, { a: 2, b: 0, ties: 0, samples: 2 });
-  assert.equal(comparison.records.cleanRacePace.samples, 2);
+  assert.deepEqual(comparison.records.raceFinish, { a: 2, b: 1, ties: 0, samples: 3 });
+  assert.deepEqual(comparison.records.qualifying, { a: 2, b: 1, ties: 0, samples: 3 });
+  assert.deepEqual(comparison.records.fastestLap, { a: 3, b: 0, ties: 0, samples: 3 });
+  assert.equal(comparison.records.cleanRacePace.samples, 3);
   assert.equal(headToHead2026("DRV_HENRY", "DRV_JONAH").records.qualifying.samples, 0);
 });
 
 test("championship round deltas include the official fastest-lap bonus", () => {
-  assert.deepEqual(pointsByRound2026("DRV_TYLER").map((entry) => entry.points), [26, 19]);
-  assert.deepEqual(headToHeadPointsDeltaByRound2026("DRV_TYLER", "DRV_JONAH").map((entry) => entry.delta), [8, -6]);
-  assert.equal(headToHeadPointsDeltaByRound2026("DRV_TYLER", "DRV_JONAH").reduce((sum, entry) => sum + entry.delta, 0), 2);
+  assert.deepEqual(pointsByRound2026("DRV_TYLER").map((entry) => entry.points), [26, 19, 26]);
+  assert.deepEqual(headToHeadPointsDeltaByRound2026("DRV_TYLER", "DRV_JONAH").map((entry) => entry.delta), [8, -6, 11]);
+  assert.equal(headToHeadPointsDeltaByRound2026("DRV_TYLER", "DRV_JONAH").reduce((sum, entry) => sum + entry.delta, 0), 13);
 });
 
-test("mathematical title status uses the current 26-point maximum per remaining race", () => {
-  assert.deepEqual(titleStatus2026("DRV_TYLER"), { status: "leader", remainingRaces: 2, maximumAvailablePoints: 52 });
-  assert.equal(titleStatus2026("DRV_JONAH").status, "contender");
+test("title eligibility stays unpublished until Round 4 scoring structure is confirmed", () => {
+  assert.equal(titleStatus2026("DRV_TYLER"), null);
+  assert.equal(titleStatus2026("DRV_JONAH"), null);
   assert.equal(calculateTitleStatus2026(10, 40, 1).status, "eliminated");
   assert.equal(calculateTitleStatus2026(14, 40, 1).status, "contender", "an exact maximum-points tie remains eligible");
 });
@@ -127,13 +127,13 @@ test("closest finish uses official classification intervals and kart usage remai
 test("statistics snapshot exposes tied ranks, source-backed records and separate event layouts", () => {
   const snapshot = statisticsSnapshot2026();
   assert.equal(snapshot.championshipRankings.pointsPerStart[0].name, "Tyler");
-  assert.equal(snapshot.championshipRankings.pointsPerStart[0].value, "22.5");
+  assert.equal(snapshot.championshipRankings.pointsPerStart[0].value, "23.7");
   const topWinRates = snapshot.championshipRankings.winRate.filter((row) => row.position === 1);
-  assert.ok(topWinRates.length > 1, "all drivers tied at the top rate share P1");
-  assert.equal(snapshot.events.length, 2);
-  assert.equal(snapshot.events[0].lapCount + snapshot.events[1].lapCount, 448);
+  assert.deepEqual(topWinRates.map((row) => row.name), ["Tyler"]);
+  assert.equal(snapshot.events.length, 3);
+  assert.equal(snapshot.events.reduce((sum, event) => sum + event.lapCount, 0), 648);
   assert.notEqual(snapshot.events[0].layoutId, snapshot.events[1].layoutId);
   assert.equal(snapshot.records.closestOfficialFinish.gapMs, 250);
-  assert.equal(snapshot.records.mostClassifiedLaps.count, 46);
+  assert.equal(snapshot.records.mostClassifiedLaps.count, 70);
   assert.ok(snapshot.metricLeaders.find((entry) => entry.label === "Most poles").leaders.includes("Jonah"));
 });

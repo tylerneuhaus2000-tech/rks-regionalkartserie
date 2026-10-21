@@ -15,7 +15,7 @@ const ranges = [[1117,1195],[1196,1274],[1275,1351],[1352,1429],[1430,1506],[150
 export const tylerRound1Onboard: OnboardVideo = {
   id: "2026-r1-tyler", season: 2026, round: 1, eventId: "2026-R01", driverId: "DRV_TYLER", kartNumber: 67,
   source: { type: "owner-gopro", reference: "copy_82E96ABF-E74F-43B0-8078-9CBA9E1F420A.MOV", playbackUrl: "https://pub-780b62e2b1144605b0b3486d8ff9432e.r2.dev/2026/round-01/onboard/tyler-1080p.mp4", status: "available", corrections: ["Owner notes: Lap 14 start corrected from 35:21 to 36:21; Lap 18 from 40:31 to 41:31 to remove overlaps. Recorded lap times remain independent."] },
-  duration: 2832, poster: "/media/2026/round-1-tyler-onboard.jpg",
+  duration: 2832, poster: "/media/2026/round-1-tyler-onboard-user.webp",
   sessions: [
     { id: "warm-up", title: "Warm up", start: 0, end: 371, quick: true },
     { id: "qualifying", title: "Qualifying", start: 372, end: 709, quick: true },

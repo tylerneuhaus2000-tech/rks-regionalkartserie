@@ -3,9 +3,11 @@
  * Values are kept as printed (MM:SS.hh) here, then normalized to integer ms.
  * No Lap 0 or start-to-line segment is present in these source sheets.
  */
+import { round3Laps } from "./round-3.ts";
+
 export type LapRecord2026 = {
-  eventId: "2026-R01" | "2026-R02";
-  sessionId: "2026-R01-RACE" | "2026-R02-RACE";
+  eventId: "2026-R01" | "2026-R02" | "2026-R03";
+  sessionId: "2026-R01-RACE" | "2026-R02-RACE" | "2026-R03-RACE";
   driverId: string;
   lapNumber: number;
   lapTimeMs: number;
@@ -75,9 +77,11 @@ function recordsForEvent(eventId: LapRecord2026["eventId"], sessionId: LapRecord
 export const raceLapRecords2026: LapRecord2026[] = [
   ...recordsForEvent("2026-R01", "2026-R01-RACE", r1Columns),
   ...recordsForEvent("2026-R02", "2026-R02-RACE", r2Columns),
+  ...round3Laps,
 ];
 
 export const recordedLapCountsByEvent2026 = {
   "2026-R01": 212,
   "2026-R02": 236,
+  "2026-R03": 200,
 } as const;

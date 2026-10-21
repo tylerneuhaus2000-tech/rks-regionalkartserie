@@ -20,16 +20,16 @@ test("2026 completed rounds contain unique classifications and correct fastest-l
   }
 });
 
-test("championship points derive from R1 and R2 classifications", () => {
+test("championship points derive from all three classified rounds", () => {
   const totals = Object.fromEntries(season2026.drivers.map((driver) => [driver.id, 0]));
   for (const event of season2026.events.filter((candidate) => candidate.status === "complete")) {
     for (const result of event.results) totals[result.driverId] += score(event, result);
   }
-  for (const [id, points] of Object.entries({ DRV_TYLER: 45, DRV_JONAH: 43, DRV_LENNARD_F: 27, DRV_LOUIS: 20, DRV_ELIJAH: 14 })) {
+  for (const [id, points] of Object.entries({ DRV_TYLER: 71, DRV_JONAH: 58, DRV_LENNAED_W: 33, DRV_LENNARD_F: 27, DRV_LOUIS: 20, DRV_ELIJAH: 18, DRV_FABIAN: 18, DRV_PETER: 14, DRV_KILIAN: 12, DRV_MIGUEL: 6 })) {
     assert.equal(totals[id], points, `${id} points`);
   }
-  assert.deepEqual(["DRV_KILIAN", "DRV_JONA_OESTERMANN", "DRV_PETER"].map((id) => totals[id]), [4, 4, 4]);
-  assert.equal(Object.values(totals).reduce((sum, value) => sum + value, 0), 203);
+  assert.deepEqual(["DRV_JONA_OESTERMANN", "DRV_MARCO", "DRV_HENRY"].map((id) => totals[id]), [4, 3, 0]);
+  assert.equal(Object.values(totals).reduce((sum, value) => sum + value, 0), 304);
 });
 
 test("confirmed winner, qualifying pole, fastest lap and timing values are preserved", () => {
@@ -42,21 +42,23 @@ test("confirmed winner, qualifying pole, fastest lap and timing values are prese
   assert.equal(r2?.results[1]?.officialTotalTimeMs - r2?.results[0]?.officialTotalTimeMs, 250);
 });
 
-test("Round 3 is the upcoming Essen event and contains no fabricated results", () => {
+test("Round 3 is classified, with nine entrants and 200 recorded laps", () => {
   const r3 = season2026.events.find((event) => event.round === 3);
-  assert.equal(r3?.date, "2026-10-21T17:00:00+02:00");
-  assert.equal(r3?.venue, "Daytona Kart Center Essen");
-  assert.equal(r3?.layoutId, null);
-  assert.equal(r3?.courseName, "Bahn 2");
-  assert.equal(r3?.status, "upcoming");
-  assert.equal(r3?.results.length, 0);
-});
-
-test("Round 3 does not inherit Round 1's unconfirmed In & Outdoor configuration", () => {
-  const r3 = season2026.events.find((event) => event.round === 3);
-  assert.equal(r3?.courseName, "Bahn 2");
-  assert.equal(r3?.layoutId, null);
-  assert.equal(r3?.lapTimes.length, 0);
+  assert.equal(r3.date, "2026-10-21T17:00:00+02:00");
+  assert.equal(r3.venue, "Daytona Kart Center Essen");
+  assert.equal(r3.layoutId, "DAYTONA-ESSEN-B2-R03-CONFIG-UNCONFIRMED");
+  assert.equal(r3.courseName, "Bahn 2");
+  assert.equal(r3.status, "complete");
+  assert.equal(r3.results.length, 9);
+  assert.equal(r3.qualifyingTimes.length, 9);
+  assert.equal(r3.lapTimes.length, 200);
+  assert.deepEqual(r3.fastestLap, { driverId: "DRV_TYLER", timeMs: 47703, lap: 18 });
+  assert.equal(r3.qualifyingTimes[0].timeMs, 48528);
+  assert.equal(r3.results[0].kartNumber, 19);
+  assert.equal(r3.results[1].officialGapToWinnerMs, 16208);
+  assert.equal(r3.results[2].officialGapToWinnerMs, 17288);
+  assert.equal(r3.results[0].officialTotalTimeMs, null, "unsupplied total time must stay unknown");
+  assert.notEqual(r3.layoutId, season2026.events[0].layoutId, "R1 and R3 configurations are not equated");
 });
 
 test("source lap records match every official race lap count and preserve official best laps", () => {
@@ -64,7 +66,7 @@ test("source lap records match every official race lap count and preserve offici
     assert.equal(event.coverage.raceClassification, "complete");
     assert.equal(event.coverage.lapTimes, "complete");
     assert.equal(event.coverage.positionByLap, "unavailable");
-    assert.equal(event.coverage.qualifyingTimes, "unavailable");
+    assert.equal(event.coverage.qualifyingTimes, event.round === 3 ? "complete" : "unavailable");
     assert.equal(event.coverage.officialMedia, "unavailable");
     assert.equal(event.lapTimes.length, recordedLapCountsByEvent2026[event.id]);
 
@@ -80,7 +82,7 @@ test("source lap records match every official race lap count and preserve offici
       assert.ok(laps.every((lap) => lap.sessionId === `${event.id}-RACE`), `${event.id} lap session identity`);
     }
   }
-  const [r1, r2] = season2026.events;
+  const [r1, r2, r3] = season2026.events;
   assert.ok(r1.lapTimes.every((lap) => lap.eventId === "2026-R01" && r1.layoutId === "DAYTONA-ESSEN-B2-IN-OUTDOOR"));
   assert.ok(r2.lapTimes.every((lap) => lap.eventId === "2026-R02" && r2.layoutId === "DAYTONA-ESSEN-B1-INDOOR"));
   assert.equal(r1.coverage.qualifyingPositions, "partial");
@@ -97,6 +99,8 @@ test("source lap records match every official race lap count and preserve offici
   assert.equal(r1.lapTimes.some((lap) => lap.driverId === "DRV_JONA_T"), true);
   assert.equal(r1.lapTimes.length, 212);
   assert.equal(r2.lapTimes.length, 236);
+  assert.equal(r3.lapTimes.length, 200);
+  assert.equal(r1.lapTimes.length + r2.lapTimes.length + r3.lapTimes.length, 648);
   for (const sourceReference of new Set([...r1.lapTimes, ...r2.lapTimes].map((lap) => lap.sourceReference))) {
     assert.ok(existsSync(resolve(sourceReference)), `archived source exists: ${sourceReference}`);
   }
@@ -142,7 +146,7 @@ test("race pace analytics remain event-specific and the derived delta is not an 
 test("stable driver identities preserve distinct similarly named competitors", () => {
   const ids = season2026.drivers.map((driver) => driver.id);
   assert.equal(new Set(ids).size, ids.length);
-  assert.notEqual(season2026.drivers.find((driver) => driver.name === "Lennard F.")?.id, season2026.drivers.find((driver) => driver.name === "Lennaed W.")?.id);
+  assert.notEqual(season2026.drivers.find((driver) => driver.name === "Lennard F.")?.id, season2026.drivers.find((driver) => driver.name === "Lennard W.")?.id);
   assert.notEqual(season2026.drivers.find((driver) => driver.name === "Jona Oestermann")?.id, season2026.drivers.find((driver) => driver.name === "Jona T.")?.id);
   assert.notEqual(season2026.drivers.find((driver) => driver.name === "Jonah")?.id, season2026.drivers.find((driver) => driver.name === "Jona T.")?.id);
   assert.ok(season2026.drivers.every((driver) => !("number" in driver)));

@@ -12,6 +12,10 @@ export function driverBySlug(slug: string) {
   return season2026.drivers.find((driver) => driver.slug === slug);
 }
 
+export function layoutName2026(layoutId: string | null) {
+  return Object.values(season2026.layouts).find((layout) => layout.id === layoutId)?.name ?? null;
+}
+
 export function tierForRating(rating: number) {
   if (rating >= 85) return "S";
   if (rating >= 70) return "A";
@@ -212,7 +216,10 @@ function splitIntoThirds<T>(values: readonly T[]) {
   return [values.slice(0, earlyCount), values.slice(earlyCount, earlyCount + middleCount), values.slice(earlyCount + middleCount)] as const;
 }
 
-function isLapTimeOutlier(value: number, center: number, mad: number) {
+function isLapTimeOutlier(value: number, center: number, mad: number, eventId: string) {
+  // R3's supplied transcription defines a symmetric 3.000 s median threshold.
+  // Preserve the established R1/R2 MAD rule and their published analytics.
+  if (eventId === "2026-R03") return Math.abs(value - center) > 3_000;
   // A robust, one-sided rule marks only unusually slow laps for analysis.
   return value > center + Math.max(3 * 1.4826 * mad, 2_500);
 }
@@ -226,7 +233,7 @@ export function lapPaceMetrics2026(eventId: string, driverId: string): LapPaceMe
   const center = median(times)!;
   const deviations = times.map((time) => Math.abs(time - center));
   const mad = median(deviations)!;
-  const outlierLaps = driverLaps.filter((lap) => isLapTimeOutlier(lap.lapTimeMs, center, mad)).map((lap) => lap.lapNumber);
+  const outlierLaps = driverLaps.filter((lap) => isLapTimeOutlier(lap.lapTimeMs, center, mad, eventId)).map((lap) => lap.lapNumber);
   const outlierSet = new Set(outlierLaps);
   const cleanLaps = driverLaps.filter((lap) => !outlierSet.has(lap.lapNumber));
   const cleanTimes = cleanLaps.map((lap) => lap.lapTimeMs);
@@ -399,6 +406,9 @@ export function calculateTitleStatus2026(points: number, leaderPoints: number, r
 }
 
 export function titleStatus2026(driverId: string) {
+  // The number of scoring opportunities in Round 4 is not yet confirmed.
+  // A one-race maximum would wrongly eliminate drivers if it has two races.
+  if (season2026.events.some((event) => event.round === 4 && event.status === "upcoming")) return null;
   const standings = getStandings2026();
   const row = standings.find((item) => item.id === driverId);
   if (!row) return null;
@@ -408,7 +418,7 @@ export function titleStatus2026(driverId: string) {
 }
 
 export function closestOfficialFinish2026() {
-  return completedEvents2026.flatMap((event) => event.results.flatMap((result) => result.intervalToPreviousMs === null ? [] : [{ eventId: event.id, round: event.round, driverId: result.driverId, aheadOfDriverId: event.results.find((candidate) => candidate.position === result.position - 1)?.driverId ?? null, gapMs: result.intervalToPreviousMs }])).sort((a, b) => a.gapMs - b.gapMs)[0] ?? null;
+  return completedEvents2026.flatMap((event) => event.results.flatMap((result) => result.intervalToPreviousMs === null || result.laps !== event.results.find((candidate) => candidate.position === result.position - 1)?.laps ? [] : [{ eventId: event.id, round: event.round, driverId: result.driverId, aheadOfDriverId: event.results.find((candidate) => candidate.position === result.position - 1)?.driverId ?? null, gapMs: result.intervalToPreviousMs }])).sort((a, b) => a.gapMs - b.gapMs)[0] ?? null;
 }
 
 export function kartUsage2026() {
@@ -507,10 +517,12 @@ export function statisticsSnapshot2026() {
   })).sort((a, b) => b.laps - a.laps || a.driverId.localeCompare(b.driverId));
   const starts = Math.max(...standings.map((driver) => driver.starts));
   const mostLaps = lapTotals[0]?.laps ?? 0;
-  const widestWin = completedEvents2026.map((event) => {
+  const widestWin = completedEvents2026.flatMap((event) => {
     const winner = event.results.find((result) => result.position === 1)!;
     const second = event.results.find((result) => result.position === 2)!;
-    return { eventId: event.id, round: event.round, winnerId: winner.driverId, marginMs: second.officialTotalTimeMs - winner.officialTotalTimeMs };
+    const marginMs = second.officialTotalTimeMs !== null && winner.officialTotalTimeMs !== null
+      ? second.officialTotalTimeMs - winner.officialTotalTimeMs : "officialGapToWinnerMs" in second ? second.officialGapToWinnerMs : null;
+    return marginMs === null ? [] : [{ eventId: event.id, round: event.round, winnerId: winner.driverId, marginMs }];
   }).sort((a, b) => b.marginMs - a.marginMs)[0] ?? null;
   const events = completedEvents2026.map((event) => {
     const fastestRecorded = event.lapTimes.reduce((fastest, lap) => lap.lapTimeMs < fastest.lapTimeMs ? lap : fastest);
@@ -520,7 +532,7 @@ export function statisticsSnapshot2026() {
       round: event.round,
       date: event.date,
       layoutId: event.layoutId,
-      layoutName: event.layoutId === "DAYTONA-ESSEN-B1-INDOOR" ? season2026.layouts.daytonaEssenB1Indoor.name : season2026.layouts.daytonaEssenB2.name,
+      layoutName: layoutName2026(event.layoutId) ?? event.courseName,
       lapCount: event.lapTimes.length,
       fastestRecordedLapMs: fastestRecorded.lapTimeMs,
       fastestRecordedLapDriverId: fastestRecorded.driverId,

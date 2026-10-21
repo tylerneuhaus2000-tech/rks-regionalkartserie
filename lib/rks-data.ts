@@ -1,5 +1,5 @@
 import { season2026 } from "@/data/2026/season";
-import { getStandings2026 } from "@/data/2026/selectors";
+import { getStandings2026, latestCompletedEvent2026, layoutName2026 } from "@/data/2026/selectors";
 
 export type Driver = {
   id?: string;
@@ -68,7 +68,7 @@ export const seasonCalendar2026: RksCalendarEvent[] = season2026.events.map((eve
   scheduleWindow: event.dateWindow ?? undefined,
   time: event.round === 3 ? "17:00" : undefined,
   venue: event.venue,
-  course: event.courseName ?? (event.layoutId ? season2026.layouts[event.layoutId === "DAYTONA-ESSEN-B1-INDOOR" ? "daytonaEssenB1Indoor" : "daytonaEssenB2"].name : null),
+  course: event.courseName ?? (event.layoutId ? layoutName2026(event.layoutId) : null),
   trackId: event.venue ? daytonaTrackId : null,
   format: event.format,
   layoutId: event.layoutId,
@@ -98,7 +98,7 @@ export const firestoreEventSeeds = seasonCalendar2026.map((event) => ({
 }));
 
 const standings = getStandings2026();
-const lastEvent = season2026.events[1]!;
+const lastEvent = latestCompletedEvent2026;
 export const drivers: Driver[] = standings.map((row) => ({
   id: row.id,
   name: row.name,
@@ -129,10 +129,10 @@ export const latestRace = {
   fastestLap: driverName(lastEvent.fastestLap!.driverId),
   fastestLapTimeMs: lastEvent.fastestLap!.timeMs,
   pole: driverName(lastEvent.qualifying[0]!),
-  winningMarginMs: lastEvent.results[1]!.officialTotalTimeMs - lastEvent.results[0]!.officialTotalTimeMs,
+  winningMarginMs: lastEvent.results[1]!.officialTotalTimeMs !== null && lastEvent.results[0]!.officialTotalTimeMs !== null ? lastEvent.results[1]!.officialTotalTimeMs - lastEvent.results[0]!.officialTotalTimeMs : "officialGapToWinnerMs" in lastEvent.results[1]! ? lastEvent.results[1]!.officialGapToWinnerMs : null,
   round: `Round ${lastEvent.round} · ${lastEvent.format}`,
   date: new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date(lastEvent.date!)),
-  venue: `${lastEvent.venue} · ${season2026.layouts[lastEvent.layoutId === "DAYTONA-ESSEN-B1-INDOOR" ? "daytonaEssenB1Indoor" : "daytonaEssenB2"].name}`,
+  venue: `${lastEvent.venue} · ${layoutName2026(lastEvent.layoutId)}`,
   eventId: lastEvent.id,
   status: "Complete",
 };

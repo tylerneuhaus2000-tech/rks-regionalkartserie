@@ -1,5 +1,6 @@
 /** Canonical 2026 RKS season source. Facts here are either supplied or explicitly derived. */
 import { raceLapRecords2026 } from "./lap-times.ts";
+import { round3Qualifying, round3Results } from "./round-3.ts";
 
 type EventCoverage = {
   raceClassification: "complete" | "unavailable";
@@ -28,12 +29,17 @@ export const season2026 = {
       venue: "Daytona Kart Center Essen",
       name: "Bahn 2 · In & Outdoor",
     },
+    daytonaEssenB2Round3: {
+      id: "DAYTONA-ESSEN-B2-R03-CONFIG-UNCONFIRMED",
+      venue: "Daytona Kart Center Essen",
+      name: "Bahn 2",
+    },
   },
   drivers: [
     { id: "DRV_TYLER", slug: "tyler", name: "Tyler", rating: 90 },
     { id: "DRV_JONAH", slug: "jonah", name: "Jonah", rating: 89 },
     { id: "DRV_LENNARD_F", slug: "lennard-f", name: "Lennard F.", rating: 75 },
-    { id: "DRV_LENNAED_W", slug: "lennaed-w", name: "Lennaed W.", rating: 74 },
+    { id: "DRV_LENNAED_W", slug: "lennaed-w", name: "Lennard W.", rating: 74 },
     { id: "DRV_LOUIS", slug: "louis", name: "Louis", rating: 64 },
     { id: "DRV_ELIJAH", slug: "elijah", name: "Elijah", rating: 52 },
     { id: "DRV_JEAN_LUCA", slug: "jean-luca", name: "Jean-Luca", rating: 74 },
@@ -45,6 +51,7 @@ export const season2026 = {
     { id: "DRV_MARCO", slug: "marco", name: "Marco", rating: 12 },
     { id: "DRV_HENRY", slug: "henry", name: "Henry", rating: 10 },
     { id: "DRV_JONA_T", slug: "jona-t", name: "Jona T.", rating: 13 },
+    { id: "DRV_MIGUEL", slug: "miguel", name: "Miguel", rating: 0 },
   ] as const,
   events: [
     {
@@ -120,17 +127,18 @@ export const season2026 = {
       date: "2026-10-21T17:00:00+02:00",
       dateWindow: null,
       venue: "Daytona Kart Center Essen",
-      layoutId: null,
+      layoutId: "DAYTONA-ESSEN-B2-R03-CONFIG-UNCONFIRMED",
       courseName: "Bahn 2",
       format: "HOT 25",
-      status: "upcoming",
-      raceWinnerId: null,
-      fastestLap: null,
-      source: "Confirmed calendar information",
-      qualifyingCoverage: "none",
-      qualifying: [], results: [],
-      lapTimes: [],
-      coverage: { raceClassification: "unavailable", lapTimes: "unavailable", qualifyingPositions: "unavailable", qualifyingTimes: "unavailable", positionByLap: "unavailable", officialMedia: "unavailable" } satisfies EventCoverage,
+      status: "complete",
+      raceWinnerId: "DRV_TYLER",
+      fastestLap: { driverId: "DRV_TYLER", timeMs: 47703, lap: 18 },
+      source: "Supplied Daytona/Apex Timing screenshot transcription; original screenshots not included in ZIP",
+      qualifyingCoverage: "complete",
+      qualifying: round3Qualifying.map((row) => row.driverId), qualifyingTimes: round3Qualifying,
+      results: round3Results,
+      lapTimes: raceLapRecords2026.filter((lap) => lap.eventId === "2026-R03"),
+      coverage: { raceClassification: "complete", lapTimes: "complete", qualifyingPositions: "complete", qualifyingTimes: "complete", positionByLap: "unavailable", officialMedia: "unavailable" } satisfies EventCoverage,
     },
     {
       id: "2026-R04", round: 4, date: null, dateWindow: "Winterferien NRW 2026", venue: null, layoutId: null, courseName: null,

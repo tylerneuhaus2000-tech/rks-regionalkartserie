@@ -30,7 +30,7 @@ export function RaceLapAnalysis({ eventId }: { eventId: string }) {
   const participants = paces.map((pace) => ({ ...pace, driver: driverById(pace.driverId)! }));
   const eventAnalytics = eventPaceAnalytics2026(eventId);
   const discrepancies = auditLapTimes2026().filter((item) => item.eventId === eventId);
-  const defaults = eventId === "2026-R02" ? ["DRV_JONAH", "DRV_TYLER", "DRV_LENNARD_F"] : ["DRV_TYLER", "DRV_JONAH", "DRV_LENNARD_F"];
+  const defaults = eventId === "2026-R02" ? ["DRV_JONAH", "DRV_TYLER", "DRV_LENNARD_F"] : eventId === "2026-R03" ? ["DRV_TYLER", "DRV_LENNAED_W", "DRV_JONAH"] : ["DRV_TYLER", "DRV_JONAH", "DRV_LENNARD_F"];
   const [selectedIds, setSelectedIds] = useState<string[]>(() => defaults.filter((id) => participants.some((item) => item.driverId === id)));
   const [driverAId, setDriverAId] = useState(eventId === "2026-R02" ? "DRV_JONAH" : "DRV_TYLER");
   const [driverBId, setDriverBId] = useState(eventId === "2026-R02" ? "DRV_TYLER" : "DRV_JONAH");
@@ -90,9 +90,9 @@ export function RaceLapAnalysis({ eventId }: { eventId: string }) {
           <td>{formatLapTime(pace.fastestRecordedLapMs)}</td><td>{formatLapTime(pace.medianLapMs)}</td><td>{formatLapTime(pace.meanLapMs)}</td><td>{formatLapTime(pace.cleanAverageMs)}</td><td>{(pace.standardDeviationMs / 1000).toFixed(2)} s</td><td>{pace.lapCount}</td><td>{pace.cleanLapCount}</td><td>{signedDeltaLabel(pace.deltaToFieldMedianMs)}</td>
         </tr>)}</tbody>
       </table></div>
-      <p className="table-note">Clean average and standard deviation exclude only algorithmically flagged slow lap-time outliers. Pace-vs-field uses the median of clean driver averages in this event: negative is faster than the field median; positive is slower.</p>
+      <p className="table-note">Clean average and standard deviation exclude algorithmically flagged lap-time outliers. Pace-vs-field uses the median of clean driver averages in this event: negative is faster than the field median; positive is slower.</p>
       <div className="lap-outlier-list"><span className="eyebrow">LAP-TIME OUTLIERS</span>{participants.filter((item) => item.outlierLaps.length).map((item) => <span className="lap-outlier-chip" key={item.driverId}><b>{item.driver.name}</b> · Lap {item.outlierLaps.join(", ")}</span>)}{participants.every((item) => !item.outlierLaps.length) && <span className="lap-outlier-chip">None under the selected screening rule</span>}</div>
-      <p className="lap-outlier-method">Screening rule: slower than the driver median by more than max(3 × 1.4826 × MAD, 2.5 s). An outlier is a timing flag only.</p>
+      <p className="lap-outlier-method">{event.round === 3 ? "Round 3 screening: absolute difference from the driver median greater than 3.000 s." : "Screening rule: slower than the driver median by more than max(3 × 1.4826 × MAD, 2.5 s)."} An outlier is a timing flag only.</p>
     </section>
 
     <section className="event-classification-section event-analytics-section" aria-labelledby="event-pace-rankings-title">
