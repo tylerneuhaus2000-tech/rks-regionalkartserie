@@ -36,7 +36,7 @@ export function OnboardPlayer({ video }: { video: OnboardVideo }) {
   const fastest = Math.min(...video.laps.map(l => l.recordedLapTimeMs));
   const event = season2026.events.find(item => item.id === video.eventId);
   const overlay = active.lap ? `RACE · LAP ${active.lap.lapNumber} / ${video.laps.length}` : active.session?.id === "formation" ? "FORMATION / PRE-RACE" : active.session?.title.toUpperCase();
-  function seek(seconds: number, lap?: number, updateUrl: boolean | null = false) {
+  const seek=useCallback((seconds: number, lap?: number, updateUrl: boolean | null = false) => {
     const next = Math.max(0,Math.min(seconds,duration));
     setTime(next);pending.current = next;
     if (media.current && media.current.readyState >= 1) { media.current.currentTime=next;pending.current=null; }
@@ -50,7 +50,7 @@ export function OnboardPlayer({ video }: { video: OnboardVideo }) {
         window.history.replaceState(window.history.state,"",url);
       }
     }
-  }
+  },[duration]);
   useEffect(()=>{
     function readLink(){
       const at=parseOnboardLink(window.location.search,video);
@@ -83,15 +83,18 @@ export function OnboardPlayer({ video }: { video: OnboardVideo }) {
   const toggle=useCallback(async()=>{if(drawing||!src)return;const node=media.current;if(!node)return;if(node.paused){try{await node.play();setError("");}catch{setError("Playback could not start. Try Play again or check your connection.");}}else node.pause();},[src,drawing]);
   useEffect(()=>{
     function onKey(event:KeyboardEvent){
-      if(event.code!=="Space"||event.repeat||event.ctrlKey||event.metaKey||event.altKey||event.defaultPrevented||drawing)return;
+      if(!["Space","ArrowLeft","ArrowRight"].includes(event.code)||event.ctrlKey||event.metaKey||event.altKey||event.defaultPrevented||drawing)return;
+      if(event.code==="Space"&&event.repeat)return;
       if((event.target as HTMLElement)?.closest?.("input,select,textarea,button,a,[contenteditable=true]"))return;
       const bounds=root.current?.getBoundingClientRect();
       if(document.fullscreenElement!==stage.current&&(!bounds||bounds.bottom<=0||bounds.top>=window.innerHeight))return;
-      event.preventDefault();event.stopPropagation();void toggle();
+      event.preventDefault();event.stopPropagation();
+      if(event.code==="Space")void toggle();
+      else seek((media.current?.currentTime ?? time)+(event.code==="ArrowRight"?5:-5));
     }
     window.addEventListener("keydown",onKey,true);
     return()=>window.removeEventListener("keydown",onKey,true);
-  },[drawing,toggle]);
+  },[drawing,seek,time,toggle]);
   function revealControls(){
     setControlsVisible(true);
     if(controlsTimer.current!==null)window.clearTimeout(controlsTimer.current);

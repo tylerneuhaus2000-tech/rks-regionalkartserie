@@ -183,11 +183,13 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
       if ((event.target as HTMLElement)?.closest?.("input,select,textarea,button,a,[contenteditable=true]") || drawing || event.defaultPrevented) return;
       const bounds = section.current?.getBoundingClientRect();
       if (document.fullscreenElement !== stage.current && (!bounds || bounds.bottom <= 0 || bounds.top >= window.innerHeight)) return;
-      if (event.code === "Space" && !event.repeat && !event.ctrlKey && !event.metaKey && !event.altKey) { event.preventDefault(); event.stopPropagation(); toggle(); }
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.code === "Space" && !event.repeat) { event.preventDefault(); event.stopPropagation(); toggle(); }
+      else if (event.code === "ArrowLeft" || event.code === "ArrowRight") { event.preventDefault(); event.stopPropagation(); seek(sharedCurrentTime.current + (event.code === "ArrowRight" ? 5 : -5)); }
     }
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [drawing, toggle]);
+  }, [drawing, seek, toggle]);
   useEffect(() => () => { if (controlsTimer.current !== null) window.clearTimeout(controlsTimer.current); }, []);
 
   return <section id="onboard" ref={section} className={`onboard multicam ${theater ? "is-theater" : ""}`} tabIndex={0} aria-label="Round 3 MultiCam onboards" onKeyDown={event => {
