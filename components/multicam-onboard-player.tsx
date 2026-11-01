@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "@/components/site-link";
-import { Maximize, Minimize, Pause, Play, RectangleHorizontal, Volume2, VolumeX } from "lucide-react";
+import { OnboardDraw } from "@/components/onboard-draw";
+import { Maximize, Minimize, Pause, Play, RectangleHorizontal, Pencil, Volume2, VolumeX } from "lucide-react";
 import { onboardClock, onboardMoment, parseMultiCamLink, playbackDriftCorrection, type MultiCamMode, type OnboardVideo } from "@/data/2026/onboards";
 import { formatLapTime } from "@/data/2026/selectors";
 
@@ -36,6 +37,7 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
   const [controlsVisible, setControlsVisible] = useState(true);
   const [buffering, setBuffering] = useState(false);
   const [error, setError] = useState("");
+  const [drawing, setDrawing] = useState(false);
   const duration = Math.max(...videos.map(video => video.duration));
   const activeCameras: Camera[] = mode === "split" ? ["tyler", "jonah"] : [mode];
   const displayedLaps = byCamera[lapCamera].laps;
@@ -92,8 +94,9 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
     for (const camera of ["tyler", "jonah"] as const) elements.current[camera]?.pause();
     setPlaying(false);
   }, []);
-  const toggle = useCallback(() => { if (desiredPlaying.current) pauseAll(); else void playActive(); }, [pauseAll, playActive]);
+  const toggle = useCallback(() => { if (drawing) return; if (desiredPlaying.current) pauseAll(); else void playActive(); }, [drawing, pauseAll, playActive]);
   const changeMode = useCallback((next: MultiCamMode) => {
+    if (drawing) return;
     if (next === modeRef.current) return;
     const wasPlaying = desiredPlaying.current;
     const oldMaster: Camera = modeRef.current === "jonah" ? "jonah" : "tyler";
@@ -111,8 +114,8 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
     }
     writeLink(next);
     if (wasPlaying) void playActive(next);
-  }, [playActive, writeLink]);
-  const seek = useCallback((seconds: number) => { syncTime(seconds); writeLink(modeRef.current, seconds); }, [syncTime, writeLink]);
+  }, [drawing, playActive, writeLink]);
+  const seek = useCallback((seconds: number) => { if (drawing) return; syncTime(seconds); writeLink(modeRef.current, seconds); }, [drawing, syncTime, writeLink]);
   const revealControls = useCallback(() => {
     setControlsVisible(true);
     if (controlsTimer.current !== null) window.clearTimeout(controlsTimer.current);
@@ -186,6 +189,7 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
   useEffect(() => () => { if (controlsTimer.current !== null) window.clearTimeout(controlsTimer.current); }, []);
 
   return <section id="onboard" ref={section} className={`onboard multicam ${theater ? "is-theater" : ""}`} tabIndex={0} aria-label="Round 3 MultiCam onboards" onKeyDown={event => {
+    if (drawing) return;
     if ((event.target as HTMLElement).closest("input,select,textarea,button,a,[contenteditable=true]") || event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.key === " " || event.key.toLowerCase() === "k") { event.preventDefault(); toggle(); }
     else if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); seek(sharedCurrentTime.current + (event.key === "ArrowRight" ? 5 : -5)); }
@@ -201,7 +205,7 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
         const visible = activeCameras.includes(camera);
         const fastest = Math.min(...video.laps.map(lap => lap.recordedLapTimeMs));
         const status = moment.lap ? `RACE · LAP ${moment.lap.lapNumber} / ${video.laps.length}` : moment.session?.id === "formation" ? "FORMATION LAP" : moment.session?.id === "finish" ? "FINISH" : "QUALIFYING";
-        return <div key={camera} className={`multicam-pane ${visible ? "is-visible" : ""}`} aria-hidden={!visible} onClick={() => toggle()}>
+        return <div key={camera} className={`multicam-pane ${visible ? "is-visible" : ""}`} aria-hidden={!visible} onClick={() => { if (!drawing) toggle(); }}>
           <video ref={node => { elements.current[camera] = node; }} src={video.source.playbackUrl ?? undefined} poster={video.poster} preload="metadata" playsInline muted={audio !== camera} aria-label={`${names[camera]} Round 3 onboard`} onLoadedMetadata={event => {
             const node = event.currentTarget;
             const at = pending.current[camera];
@@ -217,10 +221,11 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
           <div className="multicam-status"><small>RKS 2026 · ROUND 03</small><strong>{status}</strong>{moment.lap && <span>OFFICIAL LAP TIME {formatLapTime(moment.lap.recordedLapTimeMs)}{moment.lap.recordedLapTimeMs === fastest ? " · FASTEST" : ""}</span>}</div>
         </div>;
       })}</div>
+      {drawing && <OnboardDraw onClose={() => setDrawing(false)}/>}
       {buffering && <p className="onboard-buffering" role="status">Buffering…</p>}
       <div className="onboard-controls" onClick={event => event.stopPropagation()} onPointerMove={revealControls}>
         <div className="onboard-seek"><label className="sr-only" htmlFor="multicam-progress">Video position</label><input id="multicam-progress" type="range" min="0" max={duration} step="0.001" value={time} style={{ "--onboard-progress": `${time / duration * 100}%` } as CSSProperties} aria-valuetext={onboardClock(time)} onChange={event => seek(Number(event.target.value))}/><div className="onboard-markers" aria-hidden="true">{byCamera[lapCamera].laps.map(lap => <i key={lap.lapNumber} style={{ left: `${lap.videoStartSeconds / duration * 100}%` }}/>)}</div></div>
-        <div className="onboard-toolbar"><button className="onboard-icon-button" onClick={toggle} aria-label={playing ? "Pause" : "Play"}>{playing ? <Pause size={22} fill="currentColor"/> : <Play size={22} fill="currentColor"/>}</button><span className="onboard-clock">{onboardClock(time)} <span>/ {onboardClock(duration)}</span></span><div className="onboard-toolbar-spacer"/><button className="onboard-icon-button" onClick={() => setAudio(value => value === "mute" ? "tyler" : "mute")} aria-label={audio === "mute" ? "Unmute" : "Mute"}>{audio === "mute" ? <VolumeX size={20}/> : <Volume2 size={20}/>}</button><label className="multicam-audio"><span className="sr-only">Audio source</span><select value={audio} onChange={event => setAudio(event.target.value as AudioSource)}><option value="tyler">Tyler audio</option><option value="jonah">Jonah audio</option><option value="mute">Muted</option></select></label><input className="onboard-volume" type="range" min="0" max="1" step="0.05" value={volume} aria-label="Volume" onChange={event => setVolume(Number(event.target.value))}/><label className="onboard-speed"><span className="sr-only">Playback speed</span><select value={speed} onChange={event => { const next = Number(event.target.value); speedRef.current = next; setSpeed(next); for (const camera of ["tyler", "jonah"] as const) if (elements.current[camera]) elements.current[camera].playbackRate = next; }}>{[0.5, 0.75, 1, 1.25, 1.5, 2].map(rate => <option key={rate} value={rate}>{rate}×</option>)}</select></label><button className="onboard-icon-button onboard-theater-button" onClick={() => setTheater(value => !value)} aria-label={theater ? "Exit theater mode" : "Theater mode"} aria-pressed={theater}><RectangleHorizontal size={20}/></button><button className="onboard-icon-button" onClick={() => void fullscreen()} aria-label={fullscreenActive ? "Exit fullscreen" : "Fullscreen"}>{fullscreenActive ? <Minimize size={20}/> : <Maximize size={20}/>}</button></div>
+        <div className="onboard-toolbar"><button className="onboard-icon-button" onClick={toggle} aria-label={playing ? "Pause" : "Play"}>{playing ? <Pause size={22} fill="currentColor"/> : <Play size={22} fill="currentColor"/>}</button><span className="onboard-clock">{onboardClock(time)} <span>/ {onboardClock(duration)}</span></span><div className="onboard-toolbar-spacer"/><button className="onboard-icon-button" onClick={() => setAudio(value => value === "mute" ? "tyler" : "mute")} aria-label={audio === "mute" ? "Unmute" : "Mute"}>{audio === "mute" ? <VolumeX size={20}/> : <Volume2 size={20}/>}</button><label className="multicam-audio"><span className="sr-only">Audio source</span><select value={audio} onChange={event => setAudio(event.target.value as AudioSource)}><option value="tyler">Tyler audio</option><option value="jonah">Jonah audio</option><option value="mute">Muted</option></select></label><input className="onboard-volume" type="range" min="0" max="1" step="0.05" value={volume} aria-label="Volume" onChange={event => setVolume(Number(event.target.value))}/><label className="onboard-speed"><span className="sr-only">Playback speed</span><select value={speed} onChange={event => { const next = Number(event.target.value); speedRef.current = next; setSpeed(next); for (const camera of ["tyler", "jonah"] as const) if (elements.current[camera]) elements.current[camera].playbackRate = next; }}>{[0.5, 0.75, 1, 1.25, 1.5, 2].map(rate => <option key={rate} value={rate}>{rate}×</option>)}</select></label><button className="onboard-icon-button" onClick={() => { pauseAll(); setDrawing(true); setControlsVisible(true); }} aria-label="Zeichenmodus" title="Standbild zeichnen"><Pencil size={20}/></button><button className="onboard-icon-button onboard-theater-button" onClick={() => setTheater(value => !value)} aria-label={theater ? "Exit theater mode" : "Theater mode"} aria-pressed={theater}><RectangleHorizontal size={20}/></button><button className="onboard-icon-button" onClick={() => void fullscreen()} aria-label={fullscreenActive ? "Exit fullscreen" : "Fullscreen"}>{fullscreenActive ? <Minimize size={20}/> : <Maximize size={20}/>}</button></div>
       </div>
     </div>
     {error && <p className="onboard-error" role="alert">{error}</p>}
