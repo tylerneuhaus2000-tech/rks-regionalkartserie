@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "@/components/site-link";
 import { OnboardDraw } from "@/components/onboard-draw";
+import { LapComparisonPlayer } from "@/components/lap-comparison-player";
 import { Maximize, Minimize, Pause, Play, RectangleHorizontal, Pencil, Volume2, VolumeX } from "lucide-react";
 import { onboardClock, onboardMoment, parseMultiCamLink, playbackDriftCorrection, type MultiCamMode, type OnboardVideo } from "@/data/2026/onboards";
 import { formatLapTime } from "@/data/2026/selectors";
@@ -38,6 +39,7 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
   const [buffering, setBuffering] = useState(false);
   const [error, setError] = useState("");
   const [drawing, setDrawing] = useState(false);
+  const [comparing, setComparing] = useState(false);
   const duration = Math.max(...videos.map(video => video.duration));
   const activeCameras: Camera[] = mode === "split" ? ["tyler", "jonah"] : [mode];
   const displayedLaps = byCamera[lapCamera].laps;
@@ -97,6 +99,7 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
   const toggle = useCallback(() => { if (drawing) return; if (desiredPlaying.current) pauseAll(); else void playActive(); }, [drawing, pauseAll, playActive]);
   const changeMode = useCallback((next: MultiCamMode) => {
     if (drawing) return;
+    if (comparing) { setComparing(false); pending.current = { tyler: sharedCurrentTime.current, jonah: sharedCurrentTime.current }; }
     if (next === modeRef.current) return;
     const wasPlaying = desiredPlaying.current;
     const oldMaster: Camera = modeRef.current === "jonah" ? "jonah" : "tyler";
@@ -114,7 +117,7 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
     }
     writeLink(next);
     if (wasPlaying) void playActive(next);
-  }, [drawing, playActive, writeLink]);
+  }, [comparing, drawing, playActive, writeLink]);
   const seek = useCallback((seconds: number) => { if (drawing) return; syncTime(seconds); writeLink(modeRef.current, seconds); }, [drawing, syncTime, writeLink]);
   const revealControls = useCallback(() => {
     setControlsVisible(true);
@@ -180,7 +183,7 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
   }, [mode, playing]);
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if ((event.target as HTMLElement)?.closest?.("input,select,textarea,button,a,[contenteditable=true]") || drawing || event.defaultPrevented) return;
+      if ((event.target as HTMLElement)?.closest?.("input,select,textarea,button,a,[contenteditable=true]") || drawing || comparing || event.defaultPrevented) return;
       const bounds = section.current?.getBoundingClientRect();
       if (document.fullscreenElement !== stage.current && (!bounds || bounds.bottom <= 0 || bounds.top >= window.innerHeight)) return;
       if (event.ctrlKey || event.metaKey || event.altKey) return;
@@ -189,11 +192,11 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
     }
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [drawing, seek, toggle]);
+  }, [comparing, drawing, seek, toggle]);
   useEffect(() => () => { if (controlsTimer.current !== null) window.clearTimeout(controlsTimer.current); }, []);
 
   return <section id="onboard" ref={section} className={`onboard multicam ${theater ? "is-theater" : ""}`} tabIndex={0} aria-label="Round 3 MultiCam onboards" onKeyDown={event => {
-    if (drawing) return;
+    if (drawing || comparing) return;
     if ((event.target as HTMLElement).closest("input,select,textarea,button,a,[contenteditable=true]") || event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.key === " " || event.key.toLowerCase() === "k") { event.preventDefault(); toggle(); }
     else if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); seek(sharedCurrentTime.current + (event.key === "ArrowRight" ? 5 : -5)); }
@@ -201,7 +204,9 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
     else if (event.key.toLowerCase() === "t") { event.preventDefault(); setTheater(value => !value); }
   }}>
     <header className="onboard-heading"><div><span className="eyebrow">RKS 2026 · ROUND 03</span><h2>MultiCam onboard <span>Daytona · Bahn 2</span></h2><p>Two original cameras · one shared video timeline</p></div><span className="onboard-runtime">{onboardClock(duration)}<small>FULL SESSION FOOTAGE</small></span></header>
-    <div className="multicam-modebar" role="group" aria-label="Camera view">{(["tyler", "jonah", "split"] as const).map(option => <button key={option} aria-pressed={mode === option} onClick={() => changeMode(option)}>{option === "split" ? "Split screen" : `${names[option]} POV`}</button>)}</div>
+    <div className="multicam-modebar" role="group" aria-label="Camera view">{(["tyler", "jonah", "split"] as const).map(option => <button key={option} aria-pressed={!comparing && mode === option} onClick={() => changeMode(option)}>{option === "split" ? "Split screen" : `${names[option]} POV`}</button>)}<button aria-pressed={comparing} onClick={() => { if (comparing) { pending.current = { tyler: sharedCurrentTime.current, jonah: sharedCurrentTime.current }; setComparing(false); } else { pauseAll(); setComparing(true); } }}>Rundenvergleich</button></div>
+    {comparing && <LapComparisonPlayer videos={byCamera}/>}
+    {!comparing && <>
     <div className={`onboard-stage multicam-stage ${mode === "split" ? "is-split" : ""} ${playing && !buffering && !controlsVisible ? "controls-hidden" : ""}`} ref={stage} onPointerMove={revealControls} onPointerDown={revealControls} onKeyDownCapture={revealControls} onFocusCapture={revealControls}>
       <div className="multicam-panes">{(["tyler", "jonah"] as const).map(camera => {
         const video = byCamera[camera];
@@ -238,5 +243,6 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
     <div className="onboard-now"><b>{activeLap ? `${names[lapCamera]} · LAP ${activeLap.lapNumber}` : `${names[lapCamera]} · ${onboardMoment(byCamera[lapCamera], time).session?.title ?? "Session"}`}</b><span>{activeLap ? `${formatLapTime(activeLap.recordedLapTimeMs)} · official lap time` : "Video footage"}</span></div>
     <div className="onboard-lap-panel"><div className="onboard-lap-heading"><b>{names[lapCamera]} · race laps</b><span>24 LAPS · OFFICIAL LAP TIMES</span></div><div className="onboard-laps">{displayedLaps.map(lap => <button key={lap.lapNumber} aria-current={activeLap?.lapNumber === lap.lapNumber ? "true" : undefined} onClick={() => seek(lap.videoStartSeconds)}><span><b>LAP {lap.lapNumber}</b><small>{onboardClock(lap.videoStartSeconds)}</small></span><span><strong>{formatLapTime(lap.recordedLapTimeMs)}</strong>{lap.recordedLapTimeMs === Math.min(...displayedLaps.map(item => item.recordedLapTimeMs)) && <small className="onboard-fastest">FASTEST</small>}</span></button>)}</div></div>
     <p className="onboard-note">Both videos use the same absolute video clock. Lap labels use each driver’s official lap durations and a start marker supplied to the nearest video second. Jonah’s qualifying/formation boundary remains provisional. Official lap times are recorded results, not live telemetry.</p>
+    </>}
   </section>;
 }
