@@ -82,15 +82,16 @@ export function OnboardPlayer({ video }: { video: OnboardVideo }) {
   },[active.lap?.lapNumber]);
   const toggle=useCallback(async()=>{if(drawing||!src)return;const node=media.current;if(!node)return;if(node.paused){try{await node.play();setError("");}catch{setError("Playback could not start. Try Play again or check your connection.");}}else node.pause();},[src,drawing]);
   useEffect(()=>{
-    if(!fullscreenActive)return;
     function onKey(event:KeyboardEvent){
-      if(event.code!=="Space"||event.repeat||event.ctrlKey||event.metaKey||event.altKey)return;
+      if(event.code!=="Space"||event.repeat||event.ctrlKey||event.metaKey||event.altKey||event.defaultPrevented||drawing)return;
       if((event.target as HTMLElement)?.closest?.("input,select,textarea,button,a,[contenteditable=true]"))return;
+      const bounds=root.current?.getBoundingClientRect();
+      if(document.fullscreenElement!==stage.current&&(!bounds||bounds.bottom<=0||bounds.top>=window.innerHeight))return;
       event.preventDefault();event.stopPropagation();void toggle();
     }
     window.addEventListener("keydown",onKey,true);
     return()=>window.removeEventListener("keydown",onKey,true);
-  },[fullscreenActive,toggle]);
+  },[drawing,toggle]);
   function revealControls(){
     setControlsVisible(true);
     if(controlsTimer.current!==null)window.clearTimeout(controlsTimer.current);

@@ -180,12 +180,14 @@ export function MultiCamOnboardPlayer({ videos }: { videos: OnboardVideo[] }) {
   }, [mode, playing]);
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (!fullscreenActive || (event.target as HTMLElement)?.closest?.("input,select,textarea,button,a,[contenteditable=true]")) return;
+      if ((event.target as HTMLElement)?.closest?.("input,select,textarea,button,a,[contenteditable=true]") || drawing || event.defaultPrevented) return;
+      const bounds = section.current?.getBoundingClientRect();
+      if (document.fullscreenElement !== stage.current && (!bounds || bounds.bottom <= 0 || bounds.top >= window.innerHeight)) return;
       if (event.code === "Space" && !event.repeat && !event.ctrlKey && !event.metaKey && !event.altKey) { event.preventDefault(); event.stopPropagation(); toggle(); }
     }
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [fullscreenActive, toggle]);
+  }, [drawing, toggle]);
   useEffect(() => () => { if (controlsTimer.current !== null) window.clearTimeout(controlsTimer.current); }, []);
 
   return <section id="onboard" ref={section} className={`onboard multicam ${theater ? "is-theater" : ""}`} tabIndex={0} aria-label="Round 3 MultiCam onboards" onKeyDown={event => {
